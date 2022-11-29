@@ -47,12 +47,12 @@
 | Turn Off         |    |    |    | x  |
 | End Session      | x  |    |    |    |
 | Start Session    | x  |    |    |    |
-| Select Length    |    |    | x  |    |
+| Select Length    |    | x   |    |    |
 | Select Type      |    |    | x  |    |
 | Record Session   | x   |    |    |    |
 | View History     |    |    |    | x  |
 | Save Session     |    |    |    | x  |
-| Replay Session   |    |    |    |    |
+| Replay Session   |    | x   |    |    |
 | Change Users     |    |    |    | x  |
 | Create User      |    |    |    | x  |
 | Connection Test  |    |    | x  |    |
