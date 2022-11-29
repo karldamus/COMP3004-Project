@@ -49,7 +49,7 @@
 | Start Session    | x  |    |    |    |
 | Select Length    |    |    | x  |    |
 | Select Type      |    |    | x  |    |
-| Record Session   |    |    |    |    |
+| Record Session   | x   |    |    |    |
 | View History     |    |    |    | x  |
 | Save Session     |    |    |    | x  |
 | Replay Session   |    |    |    |    |
