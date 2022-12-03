@@ -1,0 +1,8 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+     <file>icons/power-button-off.png</file>
+     <file>icons/power-button-on.png</file>
+     <file>icons/triangle-up.png</file>
+     <file>icons/triangle-down.png</file>
+ </qresource>
+ </RCC>
