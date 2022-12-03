@@ -15,5 +15,4 @@ This is the final project for COMP3004 at Carleton University.
 ## Team #43
 - Karl Damus
 - Jong Sheen Alias Gabriel Chung
-- Gurkirat Dhatt
 - Evan Allen
