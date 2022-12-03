@@ -1,4 +1,4 @@
-**Use Case: Record Session**
+**Use Case: Record Session** (Karl Damus)
 
 *Primary Actor:* Device User / Device Control
 *Scope:* Oasis Pro System
@@ -6,6 +6,8 @@
 *Stakeholders and interests:*
 - User of the device - to record their therapy session and have it saved to their user profile treatment history
 - Oasis Pro Device - to gather the session type, duration, and intensity level and save it to the active users treatment history
+
+*Success guarantee:* therapy session is successfully recorded and either saved to the users profile or dismissed
 
 *Main success scenario:*
 1. Control system receives signal from device button to record the therapy session
@@ -19,4 +21,4 @@
 *Variations:*
 5'. Control system receives signal from user prompt that the user wishes to delete their recorded session - the control system will dismiss the recorded session and return to the main session screen  
 
-![[Sequence Diagram Record Session.png]]
+![[Use Case Diagram - Record Session.png]]
