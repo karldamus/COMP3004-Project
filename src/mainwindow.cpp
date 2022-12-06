@@ -2,31 +2,30 @@
 #include "ui_mainwindow.h"
 
 #include <string>
-#include <QComboBox>
-#include <QLabel>
-#include <QPushButton>
 #include <iostream>
 
 using namespace std;
 
-// UI CONSTANTS
-//
-
-#define MIN_INTENSITY_LEVEL 1
-#define MAX_INTENSITY_LEVEL 8
-
-#define POWER_BUTTON_LONG_PRESS_TIME 300
-
-//
-// END UI CONSTANTS
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    isPowered(false)
 {
     ui->setupUi(this);
 
     setupGridWrappers();
+
+    // initialize power button timer
+    powerButtonTimer = new QTimer(this);
+    powerButtonTimer->setSingleShot(true);
+    connect(powerButtonTimer, SIGNAL(timeout()), this, SLOT(powerButtonHeld()));
+
+    // initialize idle timer
+    idleTimer = new QTimer(this);
+    idleTimer->setSingleShot(true);
+    connect(idleTimer, SIGNAL(timeout()), this, SLOT(powerOff()));
+
 
 
     // dev mode
@@ -69,33 +68,49 @@ void MainWindow::setupButtons() {
     connect(powerButton, SIGNAL(released()), this, SLOT(powerButtonReleased()));
 }
 
+// turn on/off
+//
+
+void MainWindow::powerOn() {
+    isPowered = true;
+    ui->powerLED->setStyleSheet("background-color: green");
+    idleTimer->start(IDLE_TIME);
+}
+
+void MainWindow::powerOff() {
+    isPowered = false;
+    ui->powerLED->setStyleSheet("");
+    idleTimer->stop();
+}
+
 // button handling
 //
 
 void MainWindow::powerButtonClicked() {
+    if (!isPowered) return;
     cout << "Power button was clicked once!" << endl;
 }
 
 void MainWindow::powerButtonHeld() {
-    cout << "Power button was held down!" << endl;
+    if (isPowered) {
+        powerOff();
+    } else {
+        powerOn();
+    }
 }
 
 // signals
 //
 
 void MainWindow::powerButtonPressed() {
-    powerButtonTimer = new QElapsedTimer();
-    powerButtonTimer->start();
+    powerButtonTimer->start(POWER_BUTTON_LONG_PRESS_TIME);
 }
 
 void MainWindow::powerButtonReleased() {
-    if (powerButtonTimer->elapsed() > POWER_BUTTON_LONG_PRESS_TIME) {
-        powerButtonHeld();
-    } else {
+    if (powerButtonTimer->isActive()) {
+        powerButtonTimer->stop();
         powerButtonClicked();
     }
-
-    delete powerButtonTimer;
 }
 
 // dev
