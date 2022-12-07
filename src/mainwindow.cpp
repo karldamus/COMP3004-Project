@@ -6,15 +6,16 @@
 
 using namespace std;
 
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    isPowered(false)
+    isPowered(false),
+    battery(MAX_BATTERY) // device starts at 100? or should we "remember" the battery level
 {
     ui->setupUi(this);
 
     setupGridWrappers();
+    setupLightColours();
 
     // initialize power button timer
     powerButtonTimer = new QTimer(this);
@@ -35,6 +36,8 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete powerButtonTimer;
+    delete idleTimer;
 }
 
 void MainWindow::setupGridWrappers() {
@@ -53,11 +56,26 @@ void MainWindow::setupIntensityLevelDisplayWrapper() {
 
         // style the QLabel
         intensityLevelLabel->setAlignment(Qt::AlignCenter);
-        intensityLevelLabel->setStyleSheet("background-color: white");
+        intensityLevelLabel->setStyleSheet(DEFAULT_INTENSITY_COLOUR);
 
         // add QLabel to wrapper
         intensityLevelDisplayWrapper->addWidget(intensityLevelLabel);
+        intensityLabels.append(intensityLevelLabel);
     }
+    std::reverse(intensityLabels.begin(), intensityLabels.end());
+}
+
+void MainWindow::setupLightColours() {
+    lightColours = QVector<QString>({
+        "background-color: green",
+        "background-color: green",
+        "background-color: green",
+        "background-color: yellow",
+        "background-color: yellow",
+        "background-color: yellow",
+        "background-color: red",
+        "background-color: red",
+    });
 }
 
 void MainWindow::setupButtons() {
@@ -68,6 +86,27 @@ void MainWindow::setupButtons() {
     connect(powerButton, SIGNAL(released()), this, SLOT(powerButtonReleased()));
 }
 
+// helper functions to light up the numbers
+//
+void MainWindow::turnOnIntensityNum(int start, int end) {
+    while (start < end) {
+        intensityLabels[start]->setStyleSheet(lightColours[start]);
+        start++;
+    }
+}
+void MainWindow::turnOffIntensityNum(int start, int end) {
+    while (start < end) {
+        intensityLabels[start]->setStyleSheet(DEFAULT_INTENSITY_COLOUR);
+        start++;
+    }
+}
+void MainWindow::displayBattery() {
+    int batteryLevel = (MAX_INTENSITY_LEVEL * battery) / MAX_BATTERY;
+    turnOnIntensityNum(0, batteryLevel);
+
+    // TODO: low battery stuff
+}
+
 // turn on/off
 //
 
@@ -75,12 +114,18 @@ void MainWindow::powerOn() {
     isPowered = true;
     ui->powerLED->setStyleSheet("background-color: green");
     idleTimer->start(IDLE_TIME);
+
+    // show battery
+    displayBattery();
 }
 
 void MainWindow::powerOff() {
     isPowered = false;
     ui->powerLED->setStyleSheet("");
     idleTimer->stop();
+
+    // turn off all lights
+    turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
 }
 
 // button handling

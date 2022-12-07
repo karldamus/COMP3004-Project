@@ -12,6 +12,9 @@
 
 #define MIN_INTENSITY_LEVEL 1
 #define MAX_INTENSITY_LEVEL 8
+#define MAX_BATTERY         100
+
+#define DEFAULT_INTENSITY_COLOUR "background-color: white"
 
 #define POWER_BUTTON_LONG_PRESS_TIME 1000   // 1s
 #define IDLE_TIME                    120000 // 2min
@@ -48,11 +51,22 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    int battery; // ranges from 0 to 100
     bool isPowered;
 
     // timers
     QTimer* powerButtonTimer;
     QTimer* idleTimer;
+
+    // background color of each number
+    QVector<QLabel*> intensityLabels;
+    QVector<QString> lightColours;
+    void setupLightColours();
+
+    // helper functions
+    void turnOnIntensityNum(int, int);
+    void turnOffIntensityNum(int, int);
+    void displayBattery();
 
 
 private slots:
