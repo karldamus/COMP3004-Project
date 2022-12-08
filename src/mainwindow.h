@@ -6,15 +6,20 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QTimer>
+#include <QTimeLine>
 
 // UI CONSTANTS
 //
 
 #define MIN_INTENSITY_LEVEL 1
 #define MAX_INTENSITY_LEVEL 8
-#define MAX_BATTERY         100
 
-#define DEFAULT_INTENSITY_COLOUR "background-color: white"
+#define MAX_BATTERY                 100
+#define BATTERY_DRAIN_RATE          10000 // 10s
+#define BATTERY_DISPLAY_DURATION    3000 // 3s
+
+#define DEFAULT_INTENSITY_COLOUR    "background-color: white"
+#define INTENSITY_BLINK_DURATION    2000 // 0.2s
 
 #define POWER_BUTTON_LONG_PRESS_TIME 1000   // 1s
 #define IDLE_TIME                    120000 // 2min
@@ -52,16 +57,17 @@ public:
 private:
     Ui::MainWindow *ui;
     int battery; // ranges from 0 to 100
+    float batteryDrain; // rate at which the battery drains
     bool isPowered;
 
     // timers
     QTimer* powerButtonTimer;
     QTimer* idleTimer;
+    QTimer* batteryTimer;
 
     // background color of each number
     QVector<QLabel*> intensityLabels;
     QVector<QString> lightColours;
-    void setupLightColours();
 
     // helper functions
     void turnOnIntensityNum(int, int);
@@ -77,6 +83,12 @@ private slots:
     // power on/off
     void powerOn();
     void powerOff();
+    void softOff();
+
+    // battery decay
+    void drainBattery();
+
+    void clearIntensityNum();
 };
 
 #endif // MAINWINDOW_H
