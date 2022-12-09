@@ -7,6 +7,8 @@
 #include <QPushButton>
 #include <QTimer>
 #include <QTimeLine>
+#include <QProgressBar>
+#include <QTime>
 
 // UI CONSTANTS
 //
@@ -69,10 +71,14 @@ private:
     QVector<QLabel*> intensityLabels;
     QVector<QString> lightColours;
 
+    // ui elements
+    QProgressBar* batteryDisplayBar;
+
     // helper functions
     void turnOnIntensityNum(int, int);
     void turnOffIntensityNum(int, int);
     void displayBattery();
+    void delay();
 
 
 private slots:

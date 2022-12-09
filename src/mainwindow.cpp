@@ -3,6 +3,7 @@
 
 #include <string>
 #include <iostream>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -16,6 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     setupGridWrappers();
+
     lightColours = QVector<QString>({
         "background-color: green",
         "background-color: green",
@@ -41,7 +43,8 @@ MainWindow::MainWindow(QWidget *parent) :
     batteryTimer = new QTimer(this);
     connect(batteryTimer, SIGNAL(timeout()), this, SLOT(drainBattery()));
 
-
+    // initialize batteryDisplayBar
+    batteryDisplayBar = ui->batteryDisplayBar;
 
     // dev mode
     test();
@@ -159,11 +162,12 @@ void MainWindow::softOff() {
 //
 
 void MainWindow::powerButtonClicked() {
-    if (!isPowered) return;
     cout << "Power button was clicked once!" << endl;
+    if (!isPowered) return;
 }
 
 void MainWindow::powerButtonHeld() {
+    cout << "Power button was held down!" << endl;
     if (isPowered) {
         powerOff();
     } else {
@@ -188,13 +192,28 @@ void MainWindow::powerButtonReleased() {
 void MainWindow::drainBattery() {
     if (!isPowered || battery <= 0) return;
 
-    battery -= batteryDrain;
+    // battery -= batteryDrain;
+    battery -= 10;
     if (battery <= 0)
         powerOff();
+
+    batteryDisplayBar->setValue(battery);
 }
 
 // dev
 //
 
 void MainWindow::test() {
+    // test drainbattery
+    for (int i = 0; i <= 10; i++) {
+        delay();
+        drainBattery();
+    }
+}
+
+void MainWindow::delay()
+{
+    QTime dieTime= QTime::currentTime().addSecs(1);
+    while (QTime::currentTime() < dieTime)
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }
