@@ -29,30 +29,6 @@
      </property>
     </layout>
    </widget>
-   <widget class="QPushButton" name="powerButton">
-    <property name="geometry">
-     <rect>
-      <x>590</x>
-      <y>250</y>
-      <width>31</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-    <property name="icon">
-     <iconset resource="qtresources.qrc">
-      <normaloff>:/icons/power-button-off.png</normaloff>
-      <normalon>:/icons/power-button-on.png</normalon>:/icons/power-button-off.png</iconset>
-    </property>
-    <property name="checkable">
-     <bool>false</bool>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-   </widget>
    <widget class="QLabel" name="intensityLabel">
     <property name="geometry">
      <rect>
@@ -113,6 +89,39 @@
      <number>24</number>
     </property>
    </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>600</x>
+      <y>230</y>
+      <width>31</width>
+      <height>42</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="powerWrapper">
+     <item>
+      <widget class="QWidget" name="powerLED" native="true"/>
+     </item>
+     <item>
+      <widget class="QPushButton" name="powerButton">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="qtresources.qrc">
+         <normaloff>:/icons/power-button-off.png</normaloff>
+         <normalon>:/icons/power-button-on.png</normalon>:/icons/power-button-off.png</iconset>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -120,7 +129,7 @@
      <x>0</x>
      <y>0</y>
      <width>654</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuOasisPro">
