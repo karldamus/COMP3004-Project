@@ -22,10 +22,35 @@ int User::getUserId() const {
 }
 
 void User::loadSavedSessions() {
-    // convert userId to string
-    string userIdStr = to_string(userId);
+    // convert userId to a QString
+    QString userIdStr = QString::number(userId);
 
-    
+    // get the savesSessionsArray for the current user
+    QJsonObject existingJson = read();
+    QJsonObject userJson = existingJson[userIdStr].toObject();
+    QJsonArray savedSessionsArray = userJson["savedSessions"].toArray();
+
+    // iterate through savedSessionsArray and create sessions
+    for (int i = 0; i < savedSessionsArray.size(); i++) {
+        QJsonObject sessionJson = savedSessionsArray[i].toObject();
+
+        // create session
+        Session* session = createSessionFromJson(sessionJson);
+
+        // add session to savedSessions
+        savedSessions.push_back(session);
+    }
+}
+
+Session* User::createSessionFromJson(QJsonObject sessionJson) {
+    Session::SessionType sessionType = convertStringToSessionType(sessionJson.value("sessionType").toString().toStdString());
+    Session::SessionGroup sessionGroup = convertStringToSessionGroup(sessionJson.value("sessionGroup").toString().toStdString());
+    int sessionIntensity = sessionJson["sessionIntensity"].toInt();
+
+    // create session
+    Session* session = new Session(sessionType, sessionGroup, sessionIntensity);
+
+    return session;
 }
 
 void User::unloadSavedSessions() {
@@ -100,6 +125,36 @@ QString User::convertSessionTypeToQString(Session::SessionType sessionType) {
             return QString::fromStdString("beta1");
         case Session::SessionType::BETA2:
             return QString::fromStdString("beta2");
+    }
+}
+
+Session::SessionGroup User::convertStringToSessionGroup(string sessionGroupStr) {
+    if (sessionGroupStr == "20min") {
+        return Session::SessionGroup::TWENTY_MINUTES;
+    } else if (sessionGroupStr == "45min") {
+        return Session::SessionGroup::FORTY_FIVE_MINUTES;
+    } else if (sessionGroupStr == "userDesignated") {
+        return Session::SessionGroup::USER_DESIGNATED;
+    } else {
+        cout << "Received sessionGroupStr: " << sessionGroupStr << endl;
+        qFatal("Invalid sessionGroupStr");
+        return Session::SessionGroup::NULL_SESSION_GROUP;
+    }
+}
+
+Session::SessionType User::convertStringToSessionType(string sessionTypeStr) {
+    if (sessionTypeStr == "delta") {
+        return Session::SessionType::DELTA;
+    } else if (sessionTypeStr == "alpha") {
+        return Session::SessionType::ALPHA;
+    } else if (sessionTypeStr == "beta1") {
+        return Session::SessionType::BETA1;
+    } else if (sessionTypeStr == "beta2") {
+        return Session::SessionType::BETA2;
+    } else {
+        cout << "Received sessionTypeStr: " << sessionTypeStr << endl;
+        qFatal("Invalid sessionTypeStr");
+        return Session::SessionType::NULL_SESSION_TYPE;
     }
 }
 
@@ -287,7 +342,7 @@ void User::test() {
     QJsonObject sessionJson;
 
     sessionJson["sessionType"] = "alpha";
-    sessionJson["sessionGroup"] = "20min";
+    sessionJson["sessionGroup"] = "45min";
     sessionJson["sessionIntensity"] = 5;
 
     // write json object to file
@@ -296,10 +351,19 @@ void User::test() {
     QJsonObject userJson = read();
     cout << "userJson (test()): " << QJsonDocument(userJson).toJson().toStdString() << endl;
 
-    sessionJson["sessionType"] = "beta";
+    sessionJson["sessionType"] = "beta1";
     write(sessionJson);
 
     userJson = read();
 
     cout << "userJson (test()): " << QJsonDocument(userJson).toJson().toStdString() << endl;
+
+    cout << "loadSavedSessions(): " << endl;
+    loadSavedSessions();
+
+    cout << "Iterating over savedSessions: " << endl;
+
+    for (auto session : savedSessions) {
+        cout << *session << endl;
+    }
 }

@@ -52,6 +52,9 @@ class User {
         QJsonObject createNewSessionJson(Session::SessionType sessionType, Session::SessionGroup sessionGroup, int sessionIntensity);
         QString convertSessionGroupToQString(Session::SessionGroup sessionGroup);
         QString convertSessionTypeToQString(Session::SessionType sessionType);
+        Session::SessionGroup convertStringToSessionGroup(std::string sessionGroupStr);
+        Session::SessionType convertStringToSessionType(std::string sessionTypeStr);
+        Session* createSessionFromJson(QJsonObject sessionJson);
 
         // dev
         void test();
