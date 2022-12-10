@@ -44,42 +44,16 @@ void User::saveSession() {
         Session::SessionGroup sessionGroup = activeSession->getSessionGroup();
         int sessionIntensity = activeSession->getSessionIntensity();
 
-        // convert sessionType to string
-        string sessionTypeStr;
-
-        switch (sessionType) {
-            case Session::SessionType::DELTA:
-                sessionTypeStr = "delta"; break;
-            case Session::SessionType::ALPHA:
-                sessionTypeStr = "alpha"; break;
-            case Session::SessionType::BETA1:
-                sessionTypeStr = "beta1"; break;
-            case Session::SessionType::BETA2:
-                sessionTypeStr = "beta2"; break;
-        }
-
-        // convert sessionGroup to string
-        string sessionGroupStr;
-
-        switch (sessionGroup) {
-            case Session::SessionGroup::TWENTY_MINUTES:
-                sessionGroupStr = "20min"; break;
-            case Session::SessionGroup::FORTY_FIVE_MINUTES:
-                sessionGroupStr = "45min"; break;
-            case Session::SessionGroup::USER_DESIGNATED:
-                sessionGroupStr = "userDesignated"; break;
-        }
-
         // create json object
-        QJsonObject sessionJson;
-
-        sessionJson["sessionType"] = QString::fromStdString(sessionTypeStr);
-        sessionJson["sessionGroup"] = QString::fromStdString(sessionGroupStr);
-        sessionJson["sessionIntensity"] = sessionIntensity;
+        QJsonObject sessionJson = createNewSessionJson(sessionType, sessionGroup, sessionIntensity);
 
         // TODO: add valid data check
+        if (!isValidData(sessionJson)) {
+            qFatal("Invalid data in sessionJson");
+            return;
+        }
 
-        // write json object to file
+        // write session to file
         write(sessionJson);
 
         // add session to savedSessions
@@ -89,6 +63,46 @@ void User::saveSession() {
         // TODO: throw Q warning -- no active session to save
     }
 }
+
+QJsonObject User::createNewSessionJson(Session::SessionType sessionType, Session::SessionGroup sessionGroup, int sessionIntensity) {
+    // convert session type and group to strings
+    QString sessionTypeStr = convertSessionTypeToQString(sessionType);
+    QString sessionGroupStr = convertSessionGroupToQString(sessionGroup);
+
+    // create json object
+    QJsonObject sessionJson;
+
+    sessionJson["sessionType"] = sessionTypeStr;
+    sessionJson["sessionGroup"] = sessionGroupStr;
+    sessionJson["sessionIntensity"] = sessionIntensity;
+
+    return sessionJson;
+}
+
+QString User::convertSessionGroupToQString(Session::SessionGroup sessionGroup) {
+    switch (sessionGroup) {
+        case Session::SessionGroup::TWENTY_MINUTES:
+            return QString::fromStdString("20min");
+        case Session::SessionGroup::FORTY_FIVE_MINUTES:
+            return QString::fromStdString("45min");
+        case Session::SessionGroup::USER_DESIGNATED:
+            return QString::fromStdString("userDesignated");
+    }
+}
+
+QString User::convertSessionTypeToQString(Session::SessionType sessionType) {
+    switch (sessionType) {
+        case Session::SessionType::DELTA:
+            return QString::fromStdString("delta");
+        case Session::SessionType::ALPHA:
+            return QString::fromStdString("alpha");
+        case Session::SessionType::BETA1:
+            return QString::fromStdString("beta1");
+        case Session::SessionType::BETA2:
+            return QString::fromStdString("beta2");
+    }
+}
+
 
 void User::loadSession(Session *session) {
     // if activeSession is not NULL, delete it
@@ -108,17 +122,14 @@ void User::unloadSession() {
 }
 
 QJsonObject User::read() {
-    // cout << "Attempting to read user.json..." << endl;
-
-    // read the user.json file from the app data location
+    // locate the app data location
     auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 
     if (path.isEmpty()) {
         qFatal("Couldn't find writable location for user.json");
     }
 
-    QDir dir(path);
-
+    QDir dir(path); // init path
     if (dir.mkpath(dir.absolutePath()) && QDir::setCurrent(dir.absolutePath())) {
         // cout << "user.json  in " << QDir::currentPath().toStdString() << endl;
 
@@ -173,12 +184,13 @@ void User::write(QJsonObject &json) {
 
     // locate the app data location
     auto path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+
     if (path.isEmpty()) {
         qFatal("Couldn't find writable location for user.json");
         return;
     }
 
-    QDir dir(path);
+    QDir dir(path); // init path
     if (dir.mkpath(dir.absolutePath()) && QDir::setCurrent(dir.absolutePath())) {
         QFile userFile("user.json");
 

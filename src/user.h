@@ -49,6 +49,9 @@ class User {
         // helpers
         QJsonObject validateUserDoc(QJsonDocument &userDoc);
         QJsonObject createEmptyUserJson();
+        QJsonObject createNewSessionJson(Session::SessionType sessionType, Session::SessionGroup sessionGroup, int sessionIntensity);
+        QString convertSessionGroupToQString(Session::SessionGroup sessionGroup);
+        QString convertSessionTypeToQString(Session::SessionType sessionType);
 
         // dev
         void test();
