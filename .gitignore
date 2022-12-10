@@ -34,5 +34,8 @@
 # QT
 build-src*
 
+# Code
+.vscode
+
 # Miscellaneous
 .obsidian
