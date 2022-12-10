@@ -76,7 +76,7 @@
       <normaloff>:/icons/triangle-down.png</normaloff>:/icons/triangle-down.png</iconset>
     </property>
    </widget>
-   <widget class="QProgressBar" name="progressBar">
+   <widget class="QProgressBar" name="batteryDisplayBar">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -129,7 +129,7 @@
      <x>0</x>
      <y>0</y>
      <width>654</width>
-     <height>22</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuOasisPro">

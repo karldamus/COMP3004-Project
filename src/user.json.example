@@ -1,0 +1,38 @@
+{
+    "1": {
+        "userId": 1,
+
+        "savedSessions": {
+            "1": {
+                "sessionType": "DELTA",
+                "sessionGroup": "TWENTY_MINUTES",
+                "sessionIntensity": 4
+            },
+            "2": {
+                "sessionType": "BETA1",
+                "sessionGroup": "FORTY_FIVE_MINUTES",
+                "sessionIntensity": 7
+            }
+        }
+    },
+
+    "2": {
+        "userId": 2,
+
+        "savedSessions": {
+            "1": {
+                "sessionType": "DELTA",
+                "sessionGroup": "TWENTY_MINUTES",
+                "sessionIntensity": 3
+            }
+        }
+    },
+
+    "3": {
+        "userId": 3,
+
+        "savedSessions": {
+            
+        }
+    }
+}
