@@ -4,8 +4,6 @@
 #include <string>
 
 class Session {
-    Q_GADGET;
-
     public:
         enum SessionType {
             DELTA, ALPHA, BETA1, BETA2
@@ -16,21 +14,24 @@ class Session {
         };
 
         Session();
-        Session(SessionType sessionType, SessionGroup sessionGroup);
-
+        Session(SessionType sessionType, SessionGroup sessionGroup, int sessionIntensity);
+        ~Session();
 
         // getters
         SessionType getSessionType() const;
         SessionGroup getSessionGroup() const;
+        int getSessionIntensity() const;
 
         // setters
         void setSessionType(SessionType sessionType);
         void setSessionGroup(SessionGroup sessionGroup);
+        void setSessionIntensity(int sessionIntensity);
 
     private:
         SessionType sessionType;
-        SessionGroup groupType; // 20min, 45min, userDesignated
-}
+        SessionGroup sessionGroup; // 20min, 45min, userDesignated
+        int sessionIntensity;
+};
 
 
 #endif // SESSION_H

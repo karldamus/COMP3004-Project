@@ -24,4 +24,5 @@ HEADERS  += mainwindow.h\
 FORMS    += mainwindow.ui
 
 RESOURCES += \
-    qtresources.qrc
+    qtresources.qrc\
+    user.json

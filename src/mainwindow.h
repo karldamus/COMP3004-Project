@@ -10,6 +10,8 @@
 #include <QProgressBar>
 #include <QTime>
 
+#include "user.h"
+
 // UI CONSTANTS
 //
 
@@ -79,6 +81,8 @@ private:
     void turnOffIntensityNum(int, int);
     void displayBattery();
     void delay();
+
+    User user;
 
 
 private slots:

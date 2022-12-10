@@ -205,10 +205,13 @@ void MainWindow::drainBattery() {
 
 void MainWindow::test() {
     // test drainbattery
-    for (int i = 0; i <= 10; i++) {
-        delay();
-        drainBattery();
-    }
+    // for (int i = 0; i <= 10; i++) {
+    //     delay();
+    //     drainBattery();
+    // }
+
+    User user = User();
+    user.test();
 }
 
 void MainWindow::delay()

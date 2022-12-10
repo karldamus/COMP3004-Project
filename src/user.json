@@ -1,0 +1,25 @@
+{
+    "1": {
+        "userId": 1,
+
+        "savedSessions": {
+            
+        }
+    },
+
+    "2": {
+        "userId": 2,
+
+        "savedSessions": {
+
+        }
+    },
+
+    "3": {
+        "userId": 3,
+
+        "savedSessions": {
+
+        }
+    }
+}
