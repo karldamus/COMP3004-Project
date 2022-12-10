@@ -46,6 +46,10 @@ class User {
         QJsonObject read();
         void write(QJsonObject &json);
 
+        // helpers
+        QJsonObject validateUserDoc(QJsonDocument &userDoc);
+        QJsonObject createEmptyUserJson();
+
         // dev
         void test();
 
