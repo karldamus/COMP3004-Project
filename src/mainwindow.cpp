@@ -210,7 +210,7 @@ void MainWindow::test() {
     //     drainBattery();
     // }
 
-    User user = User();
+    User user = User(1);
     user.test();
 }
 
