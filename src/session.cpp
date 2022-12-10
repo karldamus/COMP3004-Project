@@ -16,6 +16,43 @@ Session::~Session() {
 
 }
 
+// override cout << for Session
+std::ostream& operator<<(std::ostream& os, const Session& session) {
+    os << "Session Type: " << session.sessionType << endl;
+    os << "Session Group: " << session.sessionGroup << endl;
+    os << "Session Intensity: " << session.sessionIntensity << endl;
+    return os;
+}
+
+// helpers
+// std::string Session::convertSessionGroupToString(SessionGroup sessionGroup) {
+//     switch (sessionGroup) {
+//         case Session::TWENTY_MINUTES:
+//             return "TWENTY_MINUTES";
+//         case Session::FORTY_FIVE_MINUTES:
+//             return "FORTY_FIVE_MINUTES";
+//         case Session::USER_DESIGNATED:
+//             return "USER_DESIGNATED";
+//         default:
+//             return "NULL_SESSION_GROUP";
+//     }
+// }
+
+// std::string Session::convertSessionTypeToString(SessionType sessionType) {
+//     switch (sessionType) {
+//         case Session::DELTA:
+//             return "DELTA";
+//         case Session::ALPHA:
+//             return "ALPHA";
+//         case Session::BETA1:
+//             return "BETA1";
+//         case Session::BETA2:
+//             return "BETA2";
+//         default:
+//             return "NULL_SESSION_TYPE";
+//     }
+// }
+
 // getters
 //
 
