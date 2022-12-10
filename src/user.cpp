@@ -2,11 +2,11 @@
 
 using namespace std;
 
-User::User() {
+User::User() : activeSession(NULL) {
 
 }
 
-User::User(int userId) {
+User::User(int userId) : activeSession(NULL) {
     this->userId = userId;
 }
 
@@ -109,7 +109,7 @@ void User::read(const QJsonObject &json) {
 
 void User::write(QJsonObject &json) const {
     // read the user.json file to get the existing data
-    QFile userFile("Resources/user.json");
+    QFile userFile(":/user.json");
 
     if (!userFile.exists()) {
         qWarning("user.json does not exist");

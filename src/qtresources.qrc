@@ -4,5 +4,6 @@
      <file>icons/power-button-on.png</file>
      <file>icons/triangle-up.png</file>
      <file>icons/triangle-down.png</file>
+     <file>user.json</file>
  </qresource>
  </RCC>
