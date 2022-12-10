@@ -17,6 +17,9 @@
 #include <QJsonValue>
 #include <QJsonArray>
 
+#include <QStandardPaths>
+#include <QDir>
+
 
 class User {
     Q_GADGET;
@@ -28,16 +31,20 @@ class User {
 
         int getUserId() const;
 
+        // file io
+        void createNewUserFile();
+
         // sessions
         void loadSavedSessions();
         void unloadSavedSessions();
         void saveSession(); // activeSession is saved
         void loadSession(Session* session);
         void unloadSession();
+        bool isValidData(QJsonObject json) const;
 
         // QJson
-        void read(const QJsonObject &json);
-        void write(QJsonObject &json) const;
+        QJsonObject read();
+        void write(QJsonObject &json);
 
         // dev
         void test();
