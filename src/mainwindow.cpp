@@ -12,7 +12,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     battery(MAX_BATTERY), // device starts at 100? or should we "remember" the battery level
     batteryDrain(1.0),
-    isPowered(false)
+    isPowered(false),
+    isRecording(false)
 {
     ui->setupUi(this);
 
@@ -59,8 +60,10 @@ MainWindow::MainWindow(QWidget *parent) :
         userLabels.append(user);
     }
 
-    // switch user button
+    // connect user buttons
     connect(ui->switchUserBtn, SIGNAL(pressed()), this, SLOT(cycleUsers()));
+    connect(ui->recordSessionBtn, SIGNAL(pressed()), this, SLOT(recordSession()));
+    connect(ui->saveBtn, SIGNAL(pressed()), this, SLOT(saveSession()));
 
     // dev mode
     test();
@@ -139,6 +142,23 @@ void MainWindow::updateUserSessionList() {
     }
 }
 
+void MainWindow::recordSession() {
+//    if (isSessionRunning) return;
+    isRecording = true;
+    ui->recordSessionBtn->setEnabled(false);
+    ui->saveBtn->setEnabled(true);
+}
+void MainWindow::saveSession() {
+    // called only after record session button has been pressed
+    isRecording = false;
+    ui->recordSessionBtn->setEnabled(true);
+    ui->saveBtn->setEnabled(false);
+
+    // assuming some group and type are always chosen (non null)
+//    currUser->loadSession(currentSession);
+//    currUser->saveSession();
+}
+
 // helper functions to light up the numbers
 //
 void MainWindow::turnOnIntensityNum(int start, int end) {
@@ -193,12 +213,14 @@ void MainWindow::powerOn() {
 }
 
 void MainWindow::powerOff() {
-    // turn off all lights
-    turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
+    turnOffIntensityNum(0, MAX_INTENSITY_LEVEL); // turn off all lights
+    ui->userSessionList->clear(); // clear user session list
 
+    // turning off the device
     isPowered = false;
     ui->powerLED->setStyleSheet("");
 
+    // stop the timers
     idleTimer->stop();
     batteryTimer->stop();
 }

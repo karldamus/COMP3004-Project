@@ -2,9 +2,11 @@
 
 using namespace std;
 
-Session::Session() {
-
-}
+Session::Session() :
+    sessionType(NULL_SESSION_TYPE),
+    sessionGroup(NULL_SESSION_GROUP),
+    sessionIntensity(0)
+{}
 
 Session::Session(SessionType sessionType, SessionGroup sessionGroup, int sessionIntensity) {
     this->sessionType = sessionType;

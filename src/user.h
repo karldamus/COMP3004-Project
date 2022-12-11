@@ -20,6 +20,7 @@
 #include <QStandardPaths>
 #include <QDir>
 
+#define MAX_SESSIONS 3
 
 class User {
     Q_GADGET;

@@ -65,6 +65,7 @@ private:
     int battery; // ranges from 0 to 100
     float batteryDrain; // rate at which the battery drains
     bool isPowered;
+    bool isRecording;
 
     // timers
     QTimer* powerButtonTimer;
@@ -104,8 +105,10 @@ private slots:
     // battery decay
     void drainBattery();
 
-    // cycle users
+    // user slots
     void cycleUsers();
+    void recordSession();
+    void saveSession();
 
     void clearIntensityNum();
 };

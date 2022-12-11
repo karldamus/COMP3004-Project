@@ -38,7 +38,6 @@ void User::loadSavedSessions() {
 
         // add session to savedSessions
         savedSessions.append(session);
-        cout << "here" <<endl;
     }
 }
 
@@ -56,7 +55,7 @@ void User::saveSession() {
         // create json object
         QJsonObject sessionJson = activeSession->toJson();
 
-        // TODO: add valid data check
+        // valid data check
         if (!isValidData(sessionJson)) {
             qFatal("Invalid data in sessionJson");
             return;
@@ -66,7 +65,10 @@ void User::saveSession() {
         write(sessionJson);
 
         // add session to savedSessions
-        savedSessions.push_back(activeSession);
+        savedSessions.append(activeSession);
+        if (savedSessions.size() > MAX_SESSIONS) {
+            savedSessions.removeFirst();
+        }
     } else {
         // activeSession is NULL
         // TODO: throw Q warning -- no active session to save
@@ -175,6 +177,9 @@ void User::write(QJsonObject &json) {
             // setters/adders
             // new session -> savedSessions array
             savedSessionsArray.push_back(json);
+            if (savedSessionsArray.size() > MAX_SESSIONS) {
+                savedSessionsArray.removeFirst();
+            }
             // replace savedSessions array with modified array
             userJson["savedSessions"] = savedSessionsArray;
             // replace userJson with modified userJson
