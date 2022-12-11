@@ -50,18 +50,26 @@ public:
 		Session::SessionGroup sessionGroup;
 	};
 
+	struct sessionTypeLabelStruct{
+		QLabel* sessionTypeLabel;
+		Session::SessionType sessionType;
+		QPixmap on;
+		QPixmap off;
+	};
+
+
     // ui creation methods
     void setupGridWrappers();
     void setupIntensityLevelDisplayWrapper();
     void setupButtons();
 	void setupSessionGroupDisplayWrapper();
+	void setupSessionTypeDisplayWrapper();
 
 
     // button handling
     void powerButtonClicked();
 
     // other initializations
-
 
     // dev testing
     void test();
@@ -85,6 +93,8 @@ private:
 
 	// session group labels
 	QVector<sessionGroupLabelStruct> sessionGroupLabels;
+	// session type labels
+	QVector<sessionTypeLabelStruct> sessionTypeLabels;
 
     // ui elements
     QProgressBar* batteryDisplayBar;
@@ -96,6 +106,9 @@ private:
     void delay();
 	void cycleSessionGroups();
 	void colourSessionGroup(Session::SessionGroup);
+	void cycleSessionTypesUp();
+	void cycleSessionTypesDown();
+	void colourSessionType(Session::SessionType);
 
 
     User user;
@@ -105,6 +118,10 @@ private slots:
     void powerButtonPressed();
     void powerButtonReleased();
     void powerButtonHeld();
+
+	// intensity buttons
+	void increaseIntensityButtonPressed();
+	void decreaseIntensityButtonPressed();
 
     // power on/off
     void powerOn();

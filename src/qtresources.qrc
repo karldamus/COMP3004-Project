@@ -8,5 +8,13 @@
      <file>icons/20min.png</file>
      <file>icons/45min.png</file>
      <file>icons/UserDesignated.png</file>
+     <file>icons/alphaOn.png</file>
+     <file>icons/alphaOff.png</file>
+     <file>icons/beta1Off.png</file>
+     <file>icons/beta1On.png</file>
+     <file>icons/beta2Off.png</file>
+     <file>icons/beta2On.png</file>
+     <file>icons/deltaOff.png</file>
+     <file>icons/deltaOn.png</file>
  </qresource>
  </RCC>

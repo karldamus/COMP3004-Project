@@ -46,6 +46,9 @@ MainWindow::MainWindow(QWidget *parent) :
     // initialize batteryDisplayBar
     batteryDisplayBar = ui->batteryDisplayBar;
 
+	// setup session type/group pictures
+
+
     // dev mode
     test();
 }
@@ -57,10 +60,50 @@ MainWindow::~MainWindow()
     delete idleTimer;
 }
 
+
+
 void MainWindow::setupGridWrappers() {
     setupIntensityLevelDisplayWrapper();
     setupButtons();
 	setupSessionGroupDisplayWrapper();
+	setupSessionTypeDisplayWrapper();
+}
+
+void MainWindow::setupSessionTypeDisplayWrapper() {
+	QHBoxLayout* sessionTypeDisplayWrapper = ui->sessionTypeDisplayWrapper;
+
+	QLabel* sessionTypeLabelDelta = new QLabel();
+	QPixmap pixmapDeltaOff = QPixmap(QString::fromStdString(":/icons/deltaOff.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	QPixmap pixmapDeltaOn = QPixmap(QString::fromStdString(":/icons/deltaOn.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	sessionTypeLabelDelta->setPixmap(pixmapDeltaOff);
+	sessionTypeDisplayWrapper->addWidget(sessionTypeLabelDelta);
+	struct sessionTypeLabelStruct sessionTypeLabelDeltaStruct = {sessionTypeLabelDelta, Session::DELTA, pixmapDeltaOn, pixmapDeltaOff};
+	sessionTypeLabels.append(sessionTypeLabelDeltaStruct);
+
+
+	QLabel* sessionTypeLabelAlpha = new QLabel();
+	QPixmap pixmapAlphaOff = QPixmap(QString::fromStdString(":/icons/alphaOff.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	QPixmap pixmapAlphaOn = QPixmap(QString::fromStdString(":/icons/alphaOn.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	sessionTypeLabelAlpha->setPixmap(pixmapAlphaOff);
+	sessionTypeDisplayWrapper->addWidget(sessionTypeLabelAlpha);
+	struct sessionTypeLabelStruct sessionTypeLabelAlphaStruct = {sessionTypeLabelAlpha, Session::ALPHA, pixmapAlphaOn, pixmapAlphaOff};
+	sessionTypeLabels.append(sessionTypeLabelAlphaStruct);
+
+	QLabel* sessionTypeLabelBeta1 = new QLabel();
+	QPixmap pixmapBeta1Off = QPixmap(QString::fromStdString(":/icons/beta1Off.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	QPixmap pixmapBeta1On = QPixmap(QString::fromStdString(":/icons/beta1On.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	sessionTypeLabelBeta1->setPixmap(pixmapBeta1Off);
+	sessionTypeDisplayWrapper->addWidget(sessionTypeLabelBeta1);
+	struct sessionTypeLabelStruct sessionTypeLabelBeta1Struct = {sessionTypeLabelBeta1, Session::BETA1, pixmapBeta1On, pixmapBeta1Off};
+	sessionTypeLabels.append(sessionTypeLabelBeta1Struct);
+
+	QLabel* sessionTypeLabelBeta2 = new QLabel();
+	QPixmap pixmapBeta2Off = QPixmap(QString::fromStdString(":/icons/beta2Off.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	QPixmap pixmapBeta2On = QPixmap(QString::fromStdString(":/icons/beta2On.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	sessionTypeLabelBeta2->setPixmap(pixmapBeta2Off);
+	sessionTypeDisplayWrapper->addWidget(sessionTypeLabelBeta2);
+	struct sessionTypeLabelStruct sessionTypeLabelBeta2Struct = {sessionTypeLabelBeta2, Session::BETA2, pixmapBeta2On, pixmapBeta2Off};
+	sessionTypeLabels.append(sessionTypeLabelBeta2Struct);
 }
 
 void MainWindow::setupSessionGroupDisplayWrapper() {
@@ -122,9 +165,13 @@ void MainWindow::setupIntensityLevelDisplayWrapper() {
 void MainWindow::setupButtons() {
     // get power button
     QPushButton* powerButton = ui->powerButton;
+	QPushButton* increaseIntensityButton = ui->increaseIntensityButton;
+	QPushButton* decreaseIntensityButton = ui->decreaseIntensityButton;
 
     connect(powerButton, SIGNAL(pressed()), this, SLOT(powerButtonPressed()));
     connect(powerButton, SIGNAL(released()), this, SLOT(powerButtonReleased()));
+	connect(increaseIntensityButton, SIGNAL(pressed()), this, SLOT(increaseIntensityButtonPressed()));
+	connect(decreaseIntensityButton, SIGNAL(pressed()), this, SLOT(decreaseIntensityButtonPressed()));
 }
 
 
@@ -172,6 +219,75 @@ void MainWindow::colourSessionGroup(Session::SessionGroup sessionGroup) {
 		}
 	}
 }
+
+void MainWindow::cycleSessionTypesUp() {
+	switch (this->currentSession->getSessionType()){
+	case Session::NULL_SESSION_TYPE:
+		this->currentSession->setSessionType(Session::DELTA);
+		colourSessionType(Session::DELTA);
+		break;
+	case Session::DELTA:
+		this->currentSession->setSessionType(Session::ALPHA);
+		colourSessionType(Session::ALPHA);
+		break;
+	case Session::ALPHA:
+		this->currentSession->setSessionType(Session::BETA1);
+		colourSessionType(Session::BETA1);
+		break;
+	case Session::BETA1:
+		this->currentSession->setSessionType(Session::BETA2);
+		colourSessionType(Session::BETA2);
+		break;
+	case Session::BETA2:
+		this->currentSession->setSessionType(Session::DELTA);
+		colourSessionType(Session::DELTA);
+		break;
+	default:
+		assert( ! "cycleSessionType given invalid enum");
+	}
+}
+
+void MainWindow::cycleSessionTypesDown() {
+	switch (this->currentSession->getSessionType()){
+	case Session::NULL_SESSION_TYPE:
+		this->currentSession->setSessionType(Session::DELTA);
+		colourSessionType(Session::DELTA);
+		break;
+	case Session::DELTA:
+		this->currentSession->setSessionType(Session::BETA2);
+		colourSessionType(Session::BETA2);
+		break;
+	case Session::ALPHA:
+		this->currentSession->setSessionType(Session::DELTA);
+		colourSessionType(Session::DELTA);
+		break;
+	case Session::BETA1:
+		this->currentSession->setSessionType(Session::ALPHA);
+		colourSessionType(Session::ALPHA);
+		break;
+	case Session::BETA2:
+		this->currentSession->setSessionType(Session::BETA1);
+		colourSessionType(Session::BETA1);
+		break;
+	default:
+		assert( ! "cycleSessionType given invalid enum");
+	}
+}
+
+// given sessionType enum, it will change to On pictures
+void MainWindow::colourSessionType(Session::SessionType sessionType) {
+	// iterate through sessionTypeLabelStructs
+	QVectorIterator<sessionTypeLabelStruct> itSessionTypeLabels(sessionTypeLabels);
+	while (itSessionTypeLabels.hasNext()){
+		sessionTypeLabelStruct currStruct = itSessionTypeLabels.next();
+		if (currStruct.sessionType == sessionType){
+			currStruct.sessionTypeLabel->setPixmap(currStruct.on);
+		} else {
+			currStruct.sessionTypeLabel->setPixmap(currStruct.off);
+		}
+	}
+}
+
 
 
 // helper functions to light up the numbers
@@ -269,6 +385,7 @@ void MainWindow::powerButtonHeld() {
     }
 }
 
+
 // signals
 //
 
@@ -281,6 +398,26 @@ void MainWindow::powerButtonReleased() {
         powerButtonTimer->stop();
         powerButtonClicked();
     }
+}
+
+void MainWindow::increaseIntensityButtonPressed() {
+	cout << "Increase Intensity button was pressed" << endl;
+	if (!isPowered) return;
+	if (isSessionRunning){
+
+	} else {
+		cycleSessionTypesUp();
+	}
+}
+
+void MainWindow::decreaseIntensityButtonPressed() {
+	cout << "Decrease Intensity button was pressed" << endl;
+	if (!isPowered) return;
+	if (isSessionRunning){
+
+	} else {
+		cycleSessionTypesDown();
+	}
 }
 
 void MainWindow::drainBattery() {
