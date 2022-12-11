@@ -84,6 +84,8 @@ private:
     void displayBattery();
     void delay();
 
+    void updateUserSessionList();
+
     User* currUser;
     QVector<User*> users;
     QVector<QLabel*> userLabels;

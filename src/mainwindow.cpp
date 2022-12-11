@@ -124,6 +124,19 @@ void MainWindow::cycleUsers() {
 
     // highlight new selected user
     userLabels[currUserId - 1]->setStyleSheet("background-color: #bdffdc;");
+
+    // update the user sessions
+    updateUserSessionList();
+}
+
+void MainWindow::updateUserSessionList() {
+    ui->userSessionList->clear();
+    Session* s;
+    const QVector<Session*>* savedSessions = currUser->getSavedSessions();
+    for (int i = 0; i < savedSessions->size(); ++i) {
+        s = savedSessions->at(i);
+        ui->userSessionList->addItem(s->toString());
+    }
 }
 
 // helper functions to light up the numbers

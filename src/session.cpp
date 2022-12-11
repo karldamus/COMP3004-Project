@@ -88,18 +88,18 @@ Session::SessionType Session::strToType(const QString& typeStr) {
 }
 
 QJsonObject Session::toJson() {
-    // convert session type and group to strings
-    QString sessionTypeStr = typeToStr(sessionType);
-    QString sessionGroupStr = groupToStr(sessionGroup);
-
     // create json object
     QJsonObject sessionJson;
 
-    sessionJson["sessionType"] = sessionTypeStr;
-    sessionJson["sessionGroup"] = sessionGroupStr;
+    sessionJson["sessionType"] = typeToStr(sessionType);
+    sessionJson["sessionGroup"] = groupToStr(sessionGroup);
     sessionJson["sessionIntensity"] = sessionIntensity;
 
     return sessionJson;
+}
+
+QString Session::toString() {
+    return QString("%1, %2, INT: %3").arg(typeToStr(sessionType), groupToStr(sessionGroup), QString::number(sessionIntensity));
 }
 
 // getters

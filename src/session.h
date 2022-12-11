@@ -39,6 +39,9 @@ class Session {
         // Json helpers
         QJsonObject toJson();
 
+        // converts to a one line string
+        QString toString();
+
         // override cout <<
         friend std::ostream& operator<<(std::ostream& os, const Session& session);
 

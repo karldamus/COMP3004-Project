@@ -9,6 +9,7 @@ User::User(int userId) : activeSession(NULL) {
     if (!userFile.exists()) {
         createNewUserFile();
     }
+    loadSavedSessions();
 }
 
 User::~User() {
@@ -16,9 +17,8 @@ User::~User() {
     unloadSavedSessions(); 
 }
 
-int User::getUserId() const {
-    return this->userId;
-}
+int User::getUserId() const { return this->userId; }
+const QVector<Session*>* User::getSavedSessions() const { return &savedSessions; }
 
 void User::loadSavedSessions() {
     // convert userId to a QString
