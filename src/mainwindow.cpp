@@ -45,6 +45,22 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // initialize batteryDisplayBar
     batteryDisplayBar = ui->batteryDisplayBar;
+    batteryDisplayBar->setValue(100);
+
+    // initialize the users
+    for (int i = 1; i <= NUM_USERS; ++i) {
+        users.append(new User(i));
+
+        QLabel *user = new QLabel(this);
+        user->setText(QString("U%1").arg(i));
+        user->setAlignment(Qt::AlignCenter);
+        ui->userList->layout()->addWidget(user);
+
+        userLabels.append(user);
+    }
+
+    // switch user button
+    connect(ui->switchUserBtn, SIGNAL(pressed()), this, SLOT(cycleUsers()));
 
     // dev mode
     test();
@@ -52,6 +68,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    for (int i = 0; i < NUM_USERS; ++i) {
+        delete users[i];
+    }
     delete ui;
     delete powerButtonTimer;
     delete idleTimer;
@@ -88,6 +107,23 @@ void MainWindow::setupButtons() {
 
     connect(powerButton, SIGNAL(pressed()), this, SLOT(powerButtonPressed()));
     connect(powerButton, SIGNAL(released()), this, SLOT(powerButtonReleased()));
+}
+
+void MainWindow::cycleUsers() {
+    if (!isPowered) return;
+    int currUserId = currUser->getUserId();
+
+    // unselect user in the ui
+    userLabels[currUserId - 1]->setStyleSheet("");
+
+    currUserId++;
+    if (currUserId > NUM_USERS) {
+        currUserId = 1;
+    }
+    currUser = users[currUserId - 1]; // array index starts at 0
+
+    // highlight new selected user
+    userLabels[currUserId - 1]->setStyleSheet("background-color: #bdffdc;");
 }
 
 // helper functions to light up the numbers
@@ -137,6 +173,10 @@ void MainWindow::powerOn() {
 
     // show battery
     displayBattery();
+
+    // select user 1
+    currUser = users[NUM_USERS - 1];
+    cycleUsers();
 }
 
 void MainWindow::powerOff() {
@@ -192,8 +232,8 @@ void MainWindow::powerButtonReleased() {
 void MainWindow::drainBattery() {
     if (!isPowered || battery <= 0) return;
 
-    // battery -= batteryDrain;
-    battery -= 10;
+     battery -= batteryDrain;
+//    battery -= 10;
     if (battery <= 0)
         powerOff();
 
@@ -204,14 +244,6 @@ void MainWindow::drainBattery() {
 //
 
 void MainWindow::test() {
-    // test drainbattery
-    // for (int i = 0; i <= 10; i++) {
-    //     delay();
-    //     drainBattery();
-    // }
-
-    User user = User(1);
-    user.test();
 }
 
 void MainWindow::delay()

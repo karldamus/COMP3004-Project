@@ -315,8 +315,8 @@ border-radius: 10px;
         <string/>
        </property>
        <property name="icon">
-        <iconset>
-         <normaloff>icons/switch-user.png</normaloff>icons/switch-user.png</iconset>
+        <iconset resource="qtresources.qrc">
+         <normaloff>:/icons/switch-user.png</normaloff>:/icons/switch-user.png</iconset>
        </property>
        <property name="iconSize">
         <size>

@@ -2,10 +2,6 @@
 
 using namespace std;
 
-User::User() : activeSession(NULL) {
-
-}
-
 User::User(int userId) : activeSession(NULL) {
     this->userId = userId;
 
@@ -54,7 +50,7 @@ Session* User::createSessionFromJson(QJsonObject sessionJson) {
 }
 
 void User::unloadSavedSessions() {
-    for (int i = 0; i < savedSessions.size(); i++) {
+    for (int i = 0; i < (int)savedSessions.size(); i++) {
         delete savedSessions[i];
     }
 

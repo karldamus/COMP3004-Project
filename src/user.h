@@ -25,8 +25,7 @@ class User {
     Q_GADGET;
 
     public:
-        User();
-        User(int userId);
+        User(int userId=1);
         ~User();
 
         int getUserId() const;

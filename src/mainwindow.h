@@ -15,6 +15,8 @@
 // UI CONSTANTS
 //
 
+#define NUM_USERS 3
+
 #define MIN_INTENSITY_LEVEL 1
 #define MAX_INTENSITY_LEVEL 8
 
@@ -82,7 +84,9 @@ private:
     void displayBattery();
     void delay();
 
-    User user;
+    User* currUser;
+    QVector<User*> users;
+    QVector<QLabel*> userLabels;
 
 
 private slots:
@@ -97,6 +101,9 @@ private slots:
 
     // battery decay
     void drainBattery();
+
+    // cycle users
+    void cycleUsers();
 
     void clearIntensityNum();
 };
