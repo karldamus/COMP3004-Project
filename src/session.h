@@ -1,6 +1,7 @@
 #ifndef SESSION_H
 #define SESSION_H
 
+#include <QJsonObject>
 #include <string>
 #include <iostream>
 
@@ -16,6 +17,7 @@ class Session {
 
         Session();
         Session(SessionType sessionType, SessionGroup sessionGroup, int sessionIntensity);
+        Session(QJsonObject sessionJson);
         ~Session();
 
         // getters
@@ -29,8 +31,13 @@ class Session {
         void setSessionIntensity(int sessionIntensity);
 
         // helpers
-        // std::string convertSessionGroupToString(SessionGroup sessionGroup);
-        // std::string convertSessionTypeToString(SessionType sessionType);
+        static QString groupToStr(SessionGroup sessionGroup);
+        static QString typeToStr(SessionType sessionType);
+        static SessionGroup strToGroup(const QString& groupStr);
+        static SessionType strToType(const QString& typeStr);
+
+        // Json helpers
+        QJsonObject toJson();
 
         // override cout <<
         friend std::ostream& operator<<(std::ostream& os, const Session& session);
