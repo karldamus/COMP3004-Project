@@ -244,16 +244,6 @@ void MainWindow::drainBattery() {
 //
 
 void MainWindow::test() {
-    // create new QJsonObject with filler data
-    QJsonObject sessionJson;
-
-    sessionJson["sessionType"] = "alpha";
-    sessionJson["sessionGroup"] = "45min";
-    sessionJson["sessionIntensity"] = 5;
-
-    // write json object to file
-    currUser->write(sessionJson);
-    currUser->test();
 }
 
 void MainWindow::delay()

@@ -2,13 +2,13 @@
 #define USER_H
 
 #include "session.h"
-#include <vector>
 #include <string>
 
 #include <iostream>
 
 #include <QFile>
 #include <QString>
+#include <QVector>
 
 // QJson
 #include <QJsonDocument>
@@ -54,7 +54,7 @@ class User {
 
     private:
         int userId; // 1, 2, or 3
-        std::vector<Session*> savedSessions;
+        QVector<Session*> savedSessions;
         Session* activeSession;
 };
 

@@ -37,7 +37,8 @@ void User::loadSavedSessions() {
         Session* session = new Session(sessionJson);
 
         // add session to savedSessions
-        savedSessions.push_back(session);
+        savedSessions.append(session);
+        cout << "here" <<endl;
     }
 }
 
