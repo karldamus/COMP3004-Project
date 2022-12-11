@@ -66,6 +66,7 @@ public:
     void setupButtons();
 	void setupSessionGroupDisplayWrapper();
 	void setupSessionTypeDisplayWrapper();
+	void setuptDCSDisplayWrapper();
 
 
     // button handling
@@ -98,6 +99,9 @@ private:
 	// session type labels
 	QVector<sessionTypeLabelStruct> sessionTypeLabels;
 
+	//tDCS label vector
+	QVector<QLabel*> tDCSLabels;
+
     // ui elements
     QProgressBar* batteryDisplayBar;
 
@@ -111,7 +115,8 @@ private:
 	void cycleSessionTypesUp();
 	void cycleSessionTypesDown();
 	void colourSessionType(Session::SessionType);
-
+	void startSession();
+	void colourtDCSNumber(int vectorPos);
 
     User user;
 
@@ -120,6 +125,8 @@ private slots:
     void powerButtonPressed();
     void powerButtonReleased();
     void powerButtonHeld();
+
+	void sessionStartButtonPressed();
 
 	// intensity buttons
 	void increaseIntensityButtonPressed();

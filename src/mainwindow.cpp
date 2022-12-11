@@ -67,6 +67,14 @@ void MainWindow::setupGridWrappers() {
     setupButtons();
 	setupSessionGroupDisplayWrapper();
 	setupSessionTypeDisplayWrapper();
+	setuptDCSDisplayWrapper();
+}
+
+void MainWindow::setuptDCSDisplayWrapper() {
+	tDCSLabels.append(ui->tDCS025Label);
+	tDCSLabels.append(ui->tDCS050Label);
+	tDCSLabels.append(ui->tDCS075Label);
+	tDCSLabels.append(ui->tDCS100Label);
 }
 
 void MainWindow::setupSessionTypeDisplayWrapper() {
@@ -163,11 +171,14 @@ void MainWindow::setupButtons() {
     QPushButton* powerButton = ui->powerButton;
 	QPushButton* increaseIntensityButton = ui->increaseIntensityButton;
 	QPushButton* decreaseIntensityButton = ui->decreaseIntensityButton;
+	QPushButton* sessionStartButton = ui->sessionStartButton;
+
 
     connect(powerButton, SIGNAL(pressed()), this, SLOT(powerButtonPressed()));
     connect(powerButton, SIGNAL(released()), this, SLOT(powerButtonReleased()));
 	connect(increaseIntensityButton, SIGNAL(pressed()), this, SLOT(increaseIntensityButtonPressed()));
 	connect(decreaseIntensityButton, SIGNAL(pressed()), this, SLOT(decreaseIntensityButtonPressed()));
+	connect(sessionStartButton, SIGNAL(pressed()), this, SLOT(sessionStartButtonPressed()));
 }
 
 
@@ -223,18 +234,22 @@ void MainWindow::cycleSessionTypesUp() {
 	case Session::NULL_SESSION_TYPE:
 		this->currentSession->setSessionType(Session::DELTA);
 		colourSessionType(Session::DELTA);
+		colourtDCSNumber(0);
 		break;
 	case Session::DELTA:
 		this->currentSession->setSessionType(Session::ALPHA);
 		colourSessionType(Session::ALPHA);
+		colourtDCSNumber(1);
 		break;
 	case Session::ALPHA:
 		this->currentSession->setSessionType(Session::BETA1);
 		colourSessionType(Session::BETA1);
+		colourtDCSNumber(2);
 		break;
 	case Session::BETA1:
 		this->currentSession->setSessionType(Session::BETA2);
 		colourSessionType(Session::BETA2);
+		colourtDCSNumber(3);
 		break;
 	case Session::BETA2:
 		break;
@@ -248,20 +263,24 @@ void MainWindow::cycleSessionTypesDown() {
 	case Session::NULL_SESSION_TYPE:
 		this->currentSession->setSessionType(Session::DELTA);
 		colourSessionType(Session::DELTA);
+		colourtDCSNumber(0);
 		break;
 	case Session::DELTA:
 		break;
 	case Session::ALPHA:
 		this->currentSession->setSessionType(Session::DELTA);
 		colourSessionType(Session::DELTA);
+		colourtDCSNumber(0);
 		break;
 	case Session::BETA1:
 		this->currentSession->setSessionType(Session::ALPHA);
 		colourSessionType(Session::ALPHA);
+		colourtDCSNumber(1);
 		break;
 	case Session::BETA2:
 		this->currentSession->setSessionType(Session::BETA1);
 		colourSessionType(Session::BETA1);
+		colourtDCSNumber(2);
 		break;
 	default:
 		assert( ! "cycleSessionType given invalid enum");
@@ -282,6 +301,19 @@ void MainWindow::colourSessionType(Session::SessionType sessionType) {
 	}
 }
 
+void MainWindow::colourtDCSNumber(int vectorPos) {
+	for (int i = 0; i < tDCSLabels.size(); i++){
+		if (i == vectorPos){
+			tDCSLabels[i]->setStyleSheet("color: green");
+		} else {
+			tDCSLabels[i]->setStyleSheet("color: black");
+		}
+	}
+}
+
+void MainWindow::startSession() {
+
+}
 
 
 // helper functions to light up the numbers
@@ -382,6 +414,16 @@ void MainWindow::powerButtonHeld() {
 
 // signals
 //
+
+void MainWindow::sessionStartButtonPressed() {
+	cout << "Start Session button was pressed" << endl;
+	if (!isPowered) return;
+	if (isSessionRunning) return;
+	if (currentSession->isGroupSet() && currentSession->isTypeSet()){
+		//start session
+		//
+	}
+}
 
 void MainWindow::powerButtonPressed() {
     powerButtonTimer->start(POWER_BUTTON_LONG_PRESS_TIME);
