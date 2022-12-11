@@ -3,7 +3,10 @@
 using namespace std;
 
 Session::Session() {
-
+	// this constructor is called when the device is turned on
+	this->sessionType = NULL_SESSION_TYPE;
+	this->sessionGroup = NULL_SESSION_GROUP;
+	this->sessionIntensity = 1;
 }
 
 Session::Session(SessionType sessionType, SessionGroup sessionGroup, int sessionIntensity) {

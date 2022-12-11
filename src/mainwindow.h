@@ -11,6 +11,7 @@
 #include <QTime>
 
 #include "user.h"
+#include "session.h"
 
 // UI CONSTANTS
 //
@@ -28,6 +29,7 @@
 #define POWER_BUTTON_LONG_PRESS_TIME 1000   // 1s
 #define IDLE_TIME                    120000 // 2min
 
+
 //
 // END UI CONSTANTS
 
@@ -43,10 +45,16 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+	struct sessionGroupLabelStruct{
+		QLabel* sessionGroupLabel;
+		Session::SessionGroup sessionGroup;
+	};
+
     // ui creation methods
     void setupGridWrappers();
     void setupIntensityLevelDisplayWrapper();
     void setupButtons();
+	void setupSessionGroupDisplayWrapper();
 
 
     // button handling
@@ -63,6 +71,8 @@ private:
     int battery; // ranges from 0 to 100
     float batteryDrain; // rate at which the battery drains
     bool isPowered;
+	Session* currentSession;
+	bool isSessionRunning;
 
     // timers
     QTimer* powerButtonTimer;
@@ -73,6 +83,9 @@ private:
     QVector<QLabel*> intensityLabels;
     QVector<QString> lightColours;
 
+	// session group labels
+	QVector<sessionGroupLabelStruct> sessionGroupLabels;
+
     // ui elements
     QProgressBar* batteryDisplayBar;
 
@@ -81,6 +94,9 @@ private:
     void turnOffIntensityNum(int, int);
     void displayBattery();
     void delay();
+	void cycleSessionGroups();
+	void colourSessionGroup(Session::SessionGroup);
+
 
     User user;
 

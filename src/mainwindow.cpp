@@ -60,6 +60,43 @@ MainWindow::~MainWindow()
 void MainWindow::setupGridWrappers() {
     setupIntensityLevelDisplayWrapper();
     setupButtons();
+	setupSessionGroupDisplayWrapper();
+}
+
+void MainWindow::setupSessionGroupDisplayWrapper() {
+	// get sessionGroupDisplayWrapper from ui
+	QHBoxLayout* sessionGroupDisplayWrapper = ui->sessionGroupDisplayWrapper;
+
+	// create labels for the 3 session groups, 20 min, 45 min, User Designed and add to wrapper and vector
+	// 20 min
+	QLabel* sessionGroupLabel20 = new QLabel();
+	QString path20min = QString(":/icons/20min.png");
+	QPixmap pixmap20Min(path20min);
+	QPixmap scaledPixmap20Min = pixmap20Min.scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	sessionGroupLabel20->setPixmap(scaledPixmap20Min);
+	sessionGroupDisplayWrapper->addWidget(sessionGroupLabel20);
+	struct sessionGroupLabelStruct sessionGroupLabel20Struct = {sessionGroupLabel20, Session::TWENTY_MINUTES};
+	sessionGroupLabels.append(sessionGroupLabel20Struct);
+
+	// 45 min
+	QLabel* sessionGroupLabel45 = new QLabel();
+	QString path45min = QString(":/icons/45min.png");
+	QPixmap pixmap45Min(path45min);
+	QPixmap scaledPixmap45Min = pixmap45Min.scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	sessionGroupLabel45->setPixmap(scaledPixmap45Min);
+	sessionGroupDisplayWrapper->addWidget(sessionGroupLabel45);
+	struct sessionGroupLabelStruct sessionGroupLabel45Struct = {sessionGroupLabel45, Session::FORTY_FIVE_MINUTES};
+	sessionGroupLabels.append(sessionGroupLabel45Struct);
+
+	QLabel* sessionGroupLabelUserDesigned = new QLabel();
+	QString pathUserDesigned = QString(":/icons/UserDesignated.png");
+	QPixmap pixmapUserDesigned(pathUserDesigned);
+	QPixmap scaledpixmapUserDesigned = pixmapUserDesigned.scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	sessionGroupLabelUserDesigned->setPixmap(scaledpixmapUserDesigned);
+	sessionGroupDisplayWrapper->addWidget(sessionGroupLabelUserDesigned);
+	struct sessionGroupLabelStruct sessionGroupLabelUserDesignedStruct = {sessionGroupLabelUserDesigned, Session::USER_DESIGNATED};
+	sessionGroupLabels.append(sessionGroupLabelUserDesignedStruct);
+
 }
 
 void MainWindow::setupIntensityLevelDisplayWrapper() {
@@ -89,6 +126,53 @@ void MainWindow::setupButtons() {
     connect(powerButton, SIGNAL(pressed()), this, SLOT(powerButtonPressed()));
     connect(powerButton, SIGNAL(released()), this, SLOT(powerButtonReleased()));
 }
+
+
+//
+// Functions for selecting sessions
+//
+void MainWindow::cycleSessionGroups() {
+	// when the power button is pressed for the first time in a blank session, it will start the cycle at 20 min (first in list)
+	// if the current session type is User Designed, it will cycle back to 20 min
+	// c++ enums are annoying, can't ++ it, using this
+	switch (this->currentSession->getSessionGroup()) {
+		case Session::NULL_SESSION_GROUP:
+			this->currentSession->setSessionGroup(Session::TWENTY_MINUTES);
+			colourSessionGroup(Session::TWENTY_MINUTES);
+			break;
+		case Session::USER_DESIGNATED:
+			this->currentSession->setSessionGroup(Session::TWENTY_MINUTES);
+			colourSessionGroup(Session::TWENTY_MINUTES);
+			break;
+		case Session::TWENTY_MINUTES:
+			this->currentSession->setSessionGroup(Session::FORTY_FIVE_MINUTES);
+			colourSessionGroup(Session::FORTY_FIVE_MINUTES);
+			break;
+		case Session::FORTY_FIVE_MINUTES:
+			this->currentSession->setSessionGroup(Session::USER_DESIGNATED);
+			colourSessionGroup(Session::USER_DESIGNATED);
+			break;
+		default:
+			assert( ! "cycleSessionGroup given invalid enum");
+	}
+	cout << "Session Group was changed to " << this->currentSession->getSessionGroup() << endl;
+
+}
+
+// given sessionGroup enum, it will highlight that groups lebel in the ui, and dehighlight all others
+void MainWindow::colourSessionGroup(Session::SessionGroup sessionGroup) {
+	// iterate through sessionGroupLabelStructs
+	QVectorIterator<sessionGroupLabelStruct> itSessionGroupLabels(sessionGroupLabels);
+	while (itSessionGroupLabels.hasNext()){
+		sessionGroupLabelStruct currStruct = itSessionGroupLabels.next();
+		if (currStruct.sessionGroup == sessionGroup){
+			currStruct.sessionGroupLabel->setStyleSheet("QLabel { background-color : rgba(0, 255, 0, 50) }");
+		} else {
+			currStruct.sessionGroupLabel->setStyleSheet("QLabel { background-color : rgba(0, 0, 0, 0) }");
+		}
+	}
+}
+
 
 // helper functions to light up the numbers
 //
@@ -129,6 +213,7 @@ void MainWindow::powerOn() {
     if (battery <= 0) return;
 
     isPowered = true;
+	isSessionRunning = false;
     ui->powerLED->setStyleSheet("background-color: green");
 
     // start revelant timers
@@ -137,11 +222,15 @@ void MainWindow::powerOn() {
 
     // show battery
     displayBattery();
+
+	// create default session with null values for the current session
+	currentSession = new Session();
 }
 
 void MainWindow::powerOff() {
     // turn off all lights
     turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
+	colourSessionGroup(Session::NULL_SESSION_GROUP); // this will remove all colour from group icons
 
     isPowered = false;
     ui->powerLED->setStyleSheet("");
@@ -164,7 +253,12 @@ void MainWindow::softOff() {
 void MainWindow::powerButtonClicked() {
     cout << "Power button was clicked once!" << endl;
     if (!isPowered) return;
+
+	// change between session groups if a session isn't running
+	if (!isSessionRunning) cycleSessionGroups();
 }
+
+
 
 void MainWindow::powerButtonHeld() {
     cout << "Power button was held down!" << endl;

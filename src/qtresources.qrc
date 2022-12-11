@@ -5,5 +5,8 @@
      <file>icons/triangle-up.png</file>
      <file>icons/triangle-down.png</file>
      <file>user.json</file>
+     <file>icons/20min.png</file>
+     <file>icons/45min.png</file>
+     <file>icons/UserDesignated.png</file>
  </qresource>
  </RCC>
