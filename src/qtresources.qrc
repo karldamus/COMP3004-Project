@@ -5,9 +5,12 @@
      <file>icons/triangle-up.png</file>
      <file>icons/triangle-down.png</file>
      <file>user.json</file>
-     <file>icons/20min.png</file>
-     <file>icons/45min.png</file>
-     <file>icons/UserDesignated.png</file>
+     <file>icons/20minOff.png</file>
+     <file>icons/45minOff.png</file>
+     <file>icons/UserDesignatedOff.png</file>
+     <file>icons/20minOn.png</file>
+     <file>icons/45minOn.png</file>
+     <file>icons/UserDesignatedOn.png</file>
      <file>icons/alphaOn.png</file>
      <file>icons/alphaOff.png</file>
      <file>icons/beta1Off.png</file>

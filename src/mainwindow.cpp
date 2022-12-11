@@ -80,7 +80,6 @@ void MainWindow::setupSessionTypeDisplayWrapper() {
 	struct sessionTypeLabelStruct sessionTypeLabelDeltaStruct = {sessionTypeLabelDelta, Session::DELTA, pixmapDeltaOn, pixmapDeltaOff};
 	sessionTypeLabels.append(sessionTypeLabelDeltaStruct);
 
-
 	QLabel* sessionTypeLabelAlpha = new QLabel();
 	QPixmap pixmapAlphaOff = QPixmap(QString::fromStdString(":/icons/alphaOff.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
 	QPixmap pixmapAlphaOn = QPixmap(QString::fromStdString(":/icons/alphaOn.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
@@ -113,31 +112,28 @@ void MainWindow::setupSessionGroupDisplayWrapper() {
 	// create labels for the 3 session groups, 20 min, 45 min, User Designed and add to wrapper and vector
 	// 20 min
 	QLabel* sessionGroupLabel20 = new QLabel();
-	QString path20min = QString(":/icons/20min.png");
-	QPixmap pixmap20Min(path20min);
-	QPixmap scaledPixmap20Min = pixmap20Min.scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
-	sessionGroupLabel20->setPixmap(scaledPixmap20Min);
+	QPixmap pixmap20minOff = QPixmap(QString::fromStdString(":/icons/20minOff.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	QPixmap pixmap20minOn = QPixmap(QString::fromStdString(":/icons/20minOn.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	sessionGroupLabel20->setPixmap(pixmap20minOff);
 	sessionGroupDisplayWrapper->addWidget(sessionGroupLabel20);
-	struct sessionGroupLabelStruct sessionGroupLabel20Struct = {sessionGroupLabel20, Session::TWENTY_MINUTES};
+	struct sessionGroupLabelStruct sessionGroupLabel20Struct = {sessionGroupLabel20, Session::TWENTY_MINUTES, pixmap20minOn, pixmap20minOff};
 	sessionGroupLabels.append(sessionGroupLabel20Struct);
 
 	// 45 min
 	QLabel* sessionGroupLabel45 = new QLabel();
-	QString path45min = QString(":/icons/45min.png");
-	QPixmap pixmap45Min(path45min);
-	QPixmap scaledPixmap45Min = pixmap45Min.scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
-	sessionGroupLabel45->setPixmap(scaledPixmap45Min);
+	QPixmap pixmap45minOff = QPixmap(QString::fromStdString(":/icons/45minOff.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	QPixmap pixmap45minOn = QPixmap(QString::fromStdString(":/icons/45minOn.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	sessionGroupLabel45->setPixmap(pixmap45minOff);
 	sessionGroupDisplayWrapper->addWidget(sessionGroupLabel45);
-	struct sessionGroupLabelStruct sessionGroupLabel45Struct = {sessionGroupLabel45, Session::FORTY_FIVE_MINUTES};
+	struct sessionGroupLabelStruct sessionGroupLabel45Struct = {sessionGroupLabel45, Session::FORTY_FIVE_MINUTES, pixmap45minOn, pixmap45minOff};
 	sessionGroupLabels.append(sessionGroupLabel45Struct);
 
 	QLabel* sessionGroupLabelUserDesigned = new QLabel();
-	QString pathUserDesigned = QString(":/icons/UserDesignated.png");
-	QPixmap pixmapUserDesigned(pathUserDesigned);
-	QPixmap scaledpixmapUserDesigned = pixmapUserDesigned.scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
-	sessionGroupLabelUserDesigned->setPixmap(scaledpixmapUserDesigned);
+	QPixmap pixmapUserDesignatedOff = QPixmap(QString::fromStdString(":/icons/45minOff.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	QPixmap pixmapUserDesignatedOn = QPixmap(QString::fromStdString(":/icons/45minOn.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	sessionGroupLabelUserDesigned->setPixmap(pixmapUserDesignatedOff);
 	sessionGroupDisplayWrapper->addWidget(sessionGroupLabelUserDesigned);
-	struct sessionGroupLabelStruct sessionGroupLabelUserDesignedStruct = {sessionGroupLabelUserDesigned, Session::USER_DESIGNATED};
+	struct sessionGroupLabelStruct sessionGroupLabelUserDesignedStruct = {sessionGroupLabelUserDesigned, Session::USER_DESIGNATED, pixmapUserDesignatedOn, pixmapUserDesignatedOff};
 	sessionGroupLabels.append(sessionGroupLabelUserDesignedStruct);
 
 }
@@ -186,6 +182,8 @@ void MainWindow::cycleSessionGroups() {
 		case Session::NULL_SESSION_GROUP:
 			this->currentSession->setSessionGroup(Session::TWENTY_MINUTES);
 			colourSessionGroup(Session::TWENTY_MINUTES);
+			//this->currentSession->setSessionType(Session::ALPHA); not sure how session type logic should work
+			//colourSessionType(Session::ALPHA);                    can you only select a type once you've selected a group?
 			break;
 		case Session::USER_DESIGNATED:
 			this->currentSession->setSessionGroup(Session::TWENTY_MINUTES);
@@ -213,9 +211,9 @@ void MainWindow::colourSessionGroup(Session::SessionGroup sessionGroup) {
 	while (itSessionGroupLabels.hasNext()){
 		sessionGroupLabelStruct currStruct = itSessionGroupLabels.next();
 		if (currStruct.sessionGroup == sessionGroup){
-			currStruct.sessionGroupLabel->setStyleSheet("QLabel { background-color : rgba(0, 255, 0, 50) }");
+			currStruct.sessionGroupLabel->setPixmap(currStruct.on);
 		} else {
-			currStruct.sessionGroupLabel->setStyleSheet("QLabel { background-color : rgba(0, 0, 0, 0) }");
+			currStruct.sessionGroupLabel->setPixmap(currStruct.off);
 		}
 	}
 }
@@ -239,8 +237,6 @@ void MainWindow::cycleSessionTypesUp() {
 		colourSessionType(Session::BETA2);
 		break;
 	case Session::BETA2:
-		this->currentSession->setSessionType(Session::DELTA);
-		colourSessionType(Session::DELTA);
 		break;
 	default:
 		assert( ! "cycleSessionType given invalid enum");
@@ -254,8 +250,6 @@ void MainWindow::cycleSessionTypesDown() {
 		colourSessionType(Session::DELTA);
 		break;
 	case Session::DELTA:
-		this->currentSession->setSessionType(Session::BETA2);
-		colourSessionType(Session::BETA2);
 		break;
 	case Session::ALPHA:
 		this->currentSession->setSessionType(Session::DELTA);

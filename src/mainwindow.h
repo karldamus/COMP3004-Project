@@ -48,6 +48,8 @@ public:
 	struct sessionGroupLabelStruct{
 		QLabel* sessionGroupLabel;
 		Session::SessionGroup sessionGroup;
+		QPixmap on;
+		QPixmap off;
 	};
 
 	struct sessionTypeLabelStruct{
