@@ -43,11 +43,17 @@ MainWindow::MainWindow(QWidget *parent) :
     batteryTimer = new QTimer(this);
     connect(batteryTimer, SIGNAL(timeout()), this, SLOT(drainBattery()));
 
+	// initialize session timer
+	sessionTimer = new QTimer(this);
+	connect(sessionTimer, SIGNAL(timeout()), this, SLOT(updateSessionTimer()));
+
     // initialize batteryDisplayBar
     batteryDisplayBar = ui->batteryDisplayBar;
 
-	// setup session type/group pictures
+	// countdown timer label
+	sessionTimeLabel = ui->sessionTimerDisplayLabel;
 
+	userDesignatedSpinBox = ui->userDesignatedTimeBox;
 
     // dev mode
     test();
@@ -137,8 +143,8 @@ void MainWindow::setupSessionGroupDisplayWrapper() {
 	sessionGroupLabels.append(sessionGroupLabel45Struct);
 
 	QLabel* sessionGroupLabelUserDesigned = new QLabel();
-	QPixmap pixmapUserDesignatedOff = QPixmap(QString::fromStdString(":/icons/45minOff.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
-	QPixmap pixmapUserDesignatedOn = QPixmap(QString::fromStdString(":/icons/45minOn.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	QPixmap pixmapUserDesignatedOff = QPixmap(QString::fromStdString(":/icons/UserDesignatedOff.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	QPixmap pixmapUserDesignatedOn = QPixmap(QString::fromStdString(":/icons/UserDesignatedOn.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
 	sessionGroupLabelUserDesigned->setPixmap(pixmapUserDesignatedOff);
 	sessionGroupDisplayWrapper->addWidget(sessionGroupLabelUserDesigned);
 	struct sessionGroupLabelStruct sessionGroupLabelUserDesignedStruct = {sessionGroupLabelUserDesigned, Session::USER_DESIGNATED, pixmapUserDesignatedOn, pixmapUserDesignatedOff};
@@ -189,6 +195,7 @@ void MainWindow::cycleSessionGroups() {
 	// when the power button is pressed for the first time in a blank session, it will start the cycle at 20 min (first in list)
 	// if the current session type is User Designed, it will cycle back to 20 min
 	// c++ enums are annoying, can't ++ it, using this
+	cout << "cycleSession" << endl;
 	switch (this->currentSession->getSessionGroup()) {
 		case Session::NULL_SESSION_GROUP:
 			this->currentSession->setSessionGroup(Session::TWENTY_MINUTES);
@@ -312,7 +319,9 @@ void MainWindow::colourtDCSNumber(int vectorPos) {
 }
 
 void MainWindow::startSession() {
+	isSessionRunning = true;
 
+	sessionTimer->start();
 }
 
 
@@ -373,20 +382,37 @@ void MainWindow::powerOff() {
     // turn off all lights
     turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
 	colourSessionGroup(Session::NULL_SESSION_GROUP); // this will remove all colour from group icons
+	colourSessionType(Session::NULL_SESSION_TYPE);
+	colourtDCSNumber(-1);
+	isSessionRunning = false;
 
     isPowered = false;
     ui->powerLED->setStyleSheet("");
 
     idleTimer->stop();
     batteryTimer->stop();
+	sessionTimer->stop();
 }
 
 void MainWindow::softOff() {
-    powerOff();
+	powerOff();
     turnOnIntensityNum(0, MAX_INTENSITY_LEVEL);
     for (int i = MAX_INTENSITY_LEVEL - 1; i >= 0; --i) {
         QTimer::singleShot(500 * (MAX_INTENSITY_LEVEL - i), this, [this, i]() {turnOffIntensityNum(i, i+1);});
     }
+
+}
+
+void MainWindow::updateSessionTimer() {
+	cout << "test" << endl;
+	if (sessionTime == 0){
+		sessionTimer->stop();
+		sessionTimeLabel->setText(QString::fromStdString(""));
+		softOff();
+	} else {
+		sessionTimeLabel->setText(QString::number(sessionTime--));
+	}
+
 }
 
 // button handling
@@ -395,8 +421,7 @@ void MainWindow::softOff() {
 void MainWindow::powerButtonClicked() {
     cout << "Power button was clicked once!" << endl;
     if (!isPowered) return;
-
-	// change between session groups if a session isn't running
+	// change between seisSessionRunningssion groups if a session isn't running
 	if (!isSessionRunning) cycleSessionGroups();
 }
 
@@ -421,7 +446,23 @@ void MainWindow::sessionStartButtonPressed() {
 	if (isSessionRunning) return;
 	if (currentSession->isGroupSet() && currentSession->isTypeSet()){
 		//start session
-		//
+		switch(currentSession->getSessionGroup()){
+		case Session::TWENTY_MINUTES:
+			sessionTimeLabel->setText(QString::number(20));
+			sessionTime = 20;
+			break;
+		case Session::FORTY_FIVE_MINUTES:
+			sessionTimeLabel->setText(QString::number(45));
+			sessionTime = 45;
+			break;
+		case Session::USER_DESIGNATED:
+			sessionTimeLabel->setText(QString::number(userDesignatedSpinBox->value()));
+			sessionTime = userDesignatedSpinBox->value();
+		}
+
+		isSessionRunning = true;
+		sessionTimer->start(1000);
+
 	}
 }
 

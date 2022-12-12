@@ -9,6 +9,7 @@
 #include <QTimeLine>
 #include <QProgressBar>
 #include <QTime>
+#include <QSpinBox>
 
 #include "user.h"
 #include "session.h"
@@ -84,11 +85,15 @@ private:
     bool isPowered;
 	Session* currentSession;
 	bool isSessionRunning;
+	int sessionTime;
+	QLabel* sessionTimeLabel;
+	QSpinBox* userDesignatedSpinBox;
 
     // timers
     QTimer* powerButtonTimer;
     QTimer* idleTimer;
     QTimer* batteryTimer;
+	QTimer* sessionTimer;
 
     // background color of each number
     QVector<QLabel*> intensityLabels;
@@ -141,6 +146,7 @@ private slots:
     void drainBattery();
 
     void clearIntensityNum();
+	void updateSessionTimer();
 };
 
 #endif // MAINWINDOW_H

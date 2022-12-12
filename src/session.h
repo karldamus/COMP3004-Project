@@ -44,6 +44,7 @@ class Session {
         int sessionIntensity;
 		bool typeSet;
 		bool groupSet;
+		int userDesignatedSessionTime;
 };
 
 

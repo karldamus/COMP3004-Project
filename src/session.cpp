@@ -9,12 +9,16 @@ Session::Session() {
 	this->sessionIntensity = 1;
 	this->groupSet = false;
 	this->typeSet = false;
+	this->userDesignatedSessionTime = 1;
+
 }
 
 Session::Session(SessionType sessionType, SessionGroup sessionGroup, int sessionIntensity) {
     this->sessionType = sessionType;
     this->sessionGroup = sessionGroup;
     this->sessionIntensity = sessionIntensity;
+	this->userDesignatedSessionTime = 1;
+
 	if (sessionType == Session::NULL_SESSION_TYPE){
 		this->typeSet = false;
 	} else {
