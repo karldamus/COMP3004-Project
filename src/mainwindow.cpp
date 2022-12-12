@@ -435,6 +435,11 @@ void MainWindow::recordSession() {
     ui->saveBtn->setEnabled(true);
 }
 void MainWindow::saveSession() {
+	if (currentSession == NULL) {
+		qWarning("currentSession is NULL");
+		return;
+	}
+
     // called only after record session button has been pressed
     isRecording = false;
     ui->recordSessionBtn->setEnabled(true);
