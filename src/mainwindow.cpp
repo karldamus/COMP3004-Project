@@ -446,9 +446,49 @@ void MainWindow::updateUserSessionList() {
     Session* s;
     const QVector<Session*>* savedSessions = currUser->getSavedSessions();
     for (int i = 0; i < savedSessions->size(); ++i) {
+		cout << "session " << i << " is " << savedSessions->at(i)->toString().toStdString() << endl;
         s = savedSessions->at(i);
         ui->userSessionList->addItem(s->toString());
     }
+
+	connect(ui->userSessionList, SIGNAL(currentRowChanged(int)), this, SLOT(updateSessionInfo(int)));
+}
+
+void MainWindow::updateSessionInfo(int row) {
+	if (row < 0) return;
+
+	const QVector<Session*>* savedSessions = currUser->getSavedSessions();
+
+	Session* s = savedSessions->at(row);
+
+	if ((s->getSessionType() != Session::NULL_SESSION_TYPE) && (s->getSessionGroup() != Session::NULL_SESSION_GROUP)) {
+		s->setIsTypeSet(true);
+		s->setIsGroupSet(true);
+	}
+
+	if (s->getSessionGroup() == Session::USER_DESIGNATED) {
+		cout << "user designated session group" << endl;
+		cout << "user designated time: " << s->getUserDesignatedSessionTime() << endl;
+		// get user designated time 
+		int userDesignatedTime = s->getUserDesignatedSessionTime();
+
+		userDesignatedSpinBox->setValue(userDesignatedTime);
+	}
+
+	cout << "session: " << endl;
+	cout << s << endl;
+
+	// stop the current session
+	// stopSession();
+	currUser->unloadSession();
+
+	// set current session to the retrieved session
+	currUser->loadSession(s);
+	currentSession = s;
+
+	// update the session info
+	colourSessionType(currentSession->getSessionType());
+	colourSessionGroup(currentSession->getSessionGroup());
 }
 
 void MainWindow::recordSession() {

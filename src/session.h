@@ -25,6 +25,7 @@ class Session {
         SessionType getSessionType() const;
         SessionGroup getSessionGroup() const;
         int getSessionIntensity() const;
+        int getUserDesignatedSessionTime() const;
 		bool isTypeSet();
 		bool isGroupSet();
 
@@ -33,6 +34,8 @@ class Session {
         void setSessionGroup(SessionGroup sessionGroup);
         void setSessionIntensity(int sessionIntensity);
         void setUserDesignatedSessionTime(int time);
+        void setIsTypeSet(bool isTypeSet);
+        void setIsGroupSet(bool isGroupSet);
 
 
         // helpers

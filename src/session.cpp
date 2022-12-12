@@ -145,6 +145,10 @@ int Session::getSessionIntensity() const {
     return this->sessionIntensity;
 }
 
+int Session::getUserDesignatedSessionTime() const {
+    return this->userDesignatedSessionTime;
+}
+
 bool Session::isGroupSet() {
 	return this->groupSet;
 }
@@ -174,3 +178,11 @@ void Session::setSessionGroup(SessionGroup sessionGroup) {
 }
 void Session::setSessionIntensity(int sessionIntensity) { this->sessionIntensity = sessionIntensity; }
 void Session::setUserDesignatedSessionTime(int time) { userDesignatedSessionTime = time; }
+
+void Session::setIsGroupSet(bool isGroupSet) {
+    this->groupSet = groupSet;
+}
+
+void Session::setIsTypeSet(bool typeSet) {
+    this->typeSet = typeSet;
+}
