@@ -19,5 +19,6 @@
      <file>icons/beta2On.png</file>
      <file>icons/deltaOff.png</file>
      <file>icons/deltaOn.png</file>
+     <file>icons/switch-user.png</file>
  </qresource>
  </RCC>

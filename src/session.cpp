@@ -2,6 +2,7 @@
 
 using namespace std;
 
+
 Session::Session() {
 	// this constructor is called when the device is turned on
 	this->sessionType = NULL_SESSION_TYPE;
@@ -12,6 +13,7 @@ Session::Session() {
 	this->userDesignatedSessionTime = 1;
 
 }
+
 
 Session::Session(SessionType sessionType, SessionGroup sessionGroup, int sessionIntensity) {
     this->sessionType = sessionType;
@@ -30,6 +32,11 @@ Session::Session(SessionType sessionType, SessionGroup sessionGroup, int session
 		this->groupSet = true;
 	}
 }
+Session::Session(QJsonObject sessionJson) {
+    sessionType = strToType(sessionJson.value("sessionType").toString());
+    sessionGroup = strToGroup(sessionJson.value("sessionGroup").toString());
+    sessionIntensity = sessionJson["sessionIntensity"].toInt();
+}
 
 Session::~Session() {
 
@@ -43,34 +50,78 @@ std::ostream& operator<<(std::ostream& os, const Session& session) {
     return os;
 }
 
-// helpers
-// std::string Session::convertSessionGroupToString(SessionGroup sessionGroup) {
-//     switch (sessionGroup) {
-//         case Session::TWENTY_MINUTES:
-//             return "TWENTY_MINUTES";
-//         case Session::FORTY_FIVE_MINUTES:
-//             return "FORTY_FIVE_MINUTES";
-//         case Session::USER_DESIGNATED:
-//             return "USER_DESIGNATED";
-//         default:
-//             return "NULL_SESSION_GROUP";
-//     }
-// }
+QString Session::groupToStr(SessionGroup sessionGroup) {
+    switch (sessionGroup) {
+        case Session::SessionGroup::TWENTY_MINUTES:
+            return QString::fromStdString("20min");
+        case Session::SessionGroup::FORTY_FIVE_MINUTES:
+            return QString::fromStdString("45min");
+        case Session::SessionGroup::USER_DESIGNATED:
+            return QString::fromStdString("userDesignated");
+        default:
+            return "";
+    }
+}
 
-// std::string Session::convertSessionTypeToString(SessionType sessionType) {
-//     switch (sessionType) {
-//         case Session::DELTA:
-//             return "DELTA";
-//         case Session::ALPHA:
-//             return "ALPHA";
-//         case Session::BETA1:
-//             return "BETA1";
-//         case Session::BETA2:
-//             return "BETA2";
-//         default:
-//             return "NULL_SESSION_TYPE";
-//     }
-// }
+QString Session::typeToStr(SessionType sessionType) {
+    switch (sessionType) {
+        case Session::SessionType::DELTA:
+            return QString::fromStdString("delta");
+        case Session::SessionType::ALPHA:
+            return QString::fromStdString("alpha");
+        case Session::SessionType::BETA1:
+            return QString::fromStdString("beta1");
+        case Session::SessionType::BETA2:
+            return QString::fromStdString("beta2");
+        default:
+            return "";
+    }
+}
+
+Session::SessionGroup Session::strToGroup(const QString& groupStr) {
+    if (groupStr == "20min") {
+        return Session::SessionGroup::TWENTY_MINUTES;
+    } else if (groupStr == "45min") {
+        return Session::SessionGroup::FORTY_FIVE_MINUTES;
+    } else if (groupStr == "userDesignated") {
+        return Session::SessionGroup::USER_DESIGNATED;
+    } else {
+        cout << "Received sessionGroupStr: " << groupStr.toStdString() << endl;
+        qFatal("Invalid sessionGroupStr");
+        return Session::SessionGroup::NULL_SESSION_GROUP;
+    }
+}
+
+Session::SessionType Session::strToType(const QString& typeStr) {
+    if (typeStr == "delta") {
+        return Session::SessionType::DELTA;
+    } else if (typeStr == "alpha") {
+        return Session::SessionType::ALPHA;
+    } else if (typeStr == "beta1") {
+        return Session::SessionType::BETA1;
+    } else if (typeStr == "beta2") {
+        return Session::SessionType::BETA2;
+    } else {
+        cout << "Received sessionTypeStr: " << typeStr.toStdString() << endl;
+        qFatal("Invalid sessionTypeStr");
+        return Session::SessionType::NULL_SESSION_TYPE;
+    }
+}
+
+QJsonObject Session::toJson() {
+    // create json object
+    QJsonObject sessionJson;
+
+    sessionJson["sessionType"] = typeToStr(sessionType);
+    sessionJson["sessionGroup"] = groupToStr(sessionGroup);
+    sessionJson["sessionIntensity"] = sessionIntensity;
+
+    return sessionJson;
+}
+
+QString Session::toString() {
+    return QString("%1, %2, INT: %3").arg(typeToStr(sessionType), groupToStr(sessionGroup), QString::number(sessionIntensity));
+}
 
 // getters
 //
@@ -119,5 +170,4 @@ void Session::setSessionGroup(SessionGroup sessionGroup) {
 void Session::setSessionIntensity(int sessionIntensity) {
     this->sessionIntensity = sessionIntensity;
 }
-
 
