@@ -20,7 +20,7 @@
 #include <QStandardPaths>
 #include <QDir>
 
-#define MAX_SESSIONS 3
+#define MAX_SESSIONS 4
 
 class User {
     Q_GADGET;
@@ -45,11 +45,12 @@ class User {
 
         // QJson
         QJsonObject read();
-        void write(QJsonObject &json);
+        void write();
 
         // helpers
         QJsonObject validateUserDoc(QJsonDocument &userDoc);
         QJsonObject createEmptyUserJson();
+        QJsonArray convertToJsonArray();
 
         // dev
         void test();
