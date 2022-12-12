@@ -64,6 +64,12 @@ public:
 		QPixmap off;
 	};
 
+	struct CESModeLabelStruct{
+		QLabel* CESModeLabel;
+		QPixmap on;
+		QPixmap off;
+	};
+
 
     // ui creation methods
     void setupGridWrappers();
@@ -72,6 +78,7 @@ public:
 	void setupSessionGroupDisplayWrapper();
 	void setupSessionTypeDisplayWrapper();
 	void setuptDCSDisplayWrapper();
+	void setupCESModeDisplayWrapper();
 
 
     // button handling
@@ -93,6 +100,8 @@ private:
 	QLabel* sessionTimeLabel;
     QSpinBox* userDesignatedSpinBox;
     bool isRecording;
+	struct CESModeLabelStruct CESshortPulse;
+	bool CESModeBlink;
 
     // timers
     QTimer* powerButtonTimer;

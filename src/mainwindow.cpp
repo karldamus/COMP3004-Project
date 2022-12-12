@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	//initialize blink timer
 	sessionBlinkTimer = new QTimer(this);
 	connect(sessionBlinkTimer, SIGNAL(timeout()), this, SLOT(sessionBlink()));
+	CESModeBlink = true;
 
     // initialize batteryDisplayBar
     batteryDisplayBar = ui->batteryDisplayBar;
@@ -108,6 +109,7 @@ void MainWindow::setupGridWrappers() {
 	setupSessionGroupDisplayWrapper();
 	setupSessionTypeDisplayWrapper();
 	setuptDCSDisplayWrapper();
+	setupCESModeDisplayWrapper();
 }
 
 void MainWindow::setuptDCSDisplayWrapper() {
@@ -115,6 +117,24 @@ void MainWindow::setuptDCSDisplayWrapper() {
 	tDCSLabels.append(ui->tDCS050Label);
 	tDCSLabels.append(ui->tDCS075Label);
 	tDCSLabels.append(ui->tDCS100Label);
+}
+
+void MainWindow::setupCESModeDisplayWrapper() {
+	QHBoxLayout* CESModeDisplayWrapper = ui->CESModeDisplayWrapper;
+
+	QLabel* CESModeLabelShortPulse = new QLabel();
+	QPixmap pixmapShortPulseOff = QPixmap(QString::fromStdString(":/icons/shortPulseOff.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	QPixmap pixmapShortPulseOn = QPixmap(QString::fromStdString(":/icons/shortPulseOn.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	CESModeLabelShortPulse->setPixmap(pixmapShortPulseOff);
+	CESModeDisplayWrapper->addWidget(CESModeLabelShortPulse);
+	CESshortPulse = {CESModeLabelShortPulse,  pixmapShortPulseOn, pixmapShortPulseOff};
+
+	QLabel* CESModeLabelDutyCycle = new QLabel();
+	QPixmap pixmapDutyCycleOff = QPixmap(QString::fromStdString(":/icons/dutyCycleOff.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	QPixmap pixmapDutyCycleOn = QPixmap(QString::fromStdString(":/icons/dutyCycleOn.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	CESModeLabelDutyCycle->setPixmap(pixmapDutyCycleOff);
+	CESModeDisplayWrapper->addWidget(CESModeLabelDutyCycle);
+
 }
 
 void MainWindow::setupSessionTypeDisplayWrapper() {
@@ -388,6 +408,7 @@ void MainWindow::startSession() {
 	default:
 		break;
 	}
+	CESshortPulse.CESModeLabel->setPixmap(CESshortPulse.on);
 	sessionBlinkTimer->stop();
 	//recolour tDCS
 	colourtDCSNumber(gettDCSNumber());
@@ -512,6 +533,7 @@ void MainWindow::powerOff() {
 	colourtDCSNumber(-1);
 	isSessionRunning = false;
 	sessionTimeLabel->setText(QString::fromStdString(""));
+	CESshortPulse.CESModeLabel->setPixmap(CESshortPulse.off);
 
 
     // turning off the device
@@ -535,7 +557,7 @@ void MainWindow::softOff() {
 }
 
 void MainWindow::updateSessionTimer() {
-	cout << "test" << endl;
+
 	if (sessionTime == 0){
 		sessionTimer->stop();
 		sessionTimeLabel->setText(QString::fromStdString(""));
@@ -571,7 +593,7 @@ void MainWindow::powerButtonHeld() {
 // signals
 //
 
-void MainWindow::sessionBlink() {
+void MainWindow::sessionBlink() { //this also does test connection display
 	int tDCSNum = gettDCSNumber();
 
 
@@ -580,6 +602,15 @@ void MainWindow::sessionBlink() {
 	} else {
 		tDCSLabels[tDCSNum]->setStyleSheet("color: green");
 	}
+
+	if (CESModeBlink){
+		CESshortPulse.CESModeLabel->setPixmap(CESshortPulse.on);
+		CESModeBlink = false;
+	} else {
+		CESshortPulse.CESModeLabel->setPixmap(CESshortPulse.off);
+		CESModeBlink = true;
+	}
+
 
 
 }
@@ -592,28 +623,8 @@ void MainWindow::sessionStartButtonPressed() {
 		//start session
 		sessionBlinkTimer->start(500);
 		startSessionTimer->start(5000);
-		//startSession();
-//		switch(currentSession->getSessionGroup()){
-//		case Session::TWENTY_MINUTES:
-//			sessionTimeLabel->setText(QString::number(20));
-//			sessionTime = 20;
-//			break;
-//		case Session::FORTY_FIVE_MINUTES:
-//			sessionTimeLabel->setText(QString::number(45));
-//			sessionTime = 45;
-//			break;
-//		case Session::USER_DESIGNATED:
-//			sessionTimeLabel->setText(QString::number(userDesignatedSpinBox->value()));
-//			sessionTime = userDesignatedSpinBox->value();
-
-//		default:
-//			break;
-//		}
-
-//		isSessionRunning = true;
-//		turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
-//		turnOnIntensityNum(0, currentSession->getSessionIntensity());
-//		sessionTimer->start(1000);
+		turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
+		turnOnIntensityNum(0, 3);
 
 	}
 }

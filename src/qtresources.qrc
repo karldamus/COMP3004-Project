@@ -20,5 +20,9 @@
      <file>icons/deltaOff.png</file>
      <file>icons/deltaOn.png</file>
      <file>icons/switch-user.png</file>
+     <file>icons/dutyCycleOff.png</file>
+     <file>icons/dutyCycleOn.png</file>
+     <file>icons/shortPulseOff.png</file>
+     <file>icons/shortPulseOn.png</file>
  </qresource>
  </RCC>
