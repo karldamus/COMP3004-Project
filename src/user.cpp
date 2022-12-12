@@ -13,7 +13,6 @@ User::User(int userId) : activeSession(NULL) {
 }
 
 User::~User() {
-    unloadSession();
     unloadSavedSessions(); 
 }
 
@@ -76,20 +75,13 @@ void User::saveSession() {
 }
 
 void User::loadSession(Session *session) {
-    // if activeSession is not NULL, delete it
-    if (activeSession != NULL) {
-        delete activeSession;
-    }
-
     // set activeSession to session
-    activeSession = session;
+    // make sure saveSession is called after calling loadSession
+    activeSession = new Session(session);
 }
 
 void User::unloadSession() {
-    if (activeSession != NULL) {
-        delete activeSession;
-        activeSession = NULL;
-    }
+    activeSession = NULL;
 }
 
 QJsonObject User::read() {

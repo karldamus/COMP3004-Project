@@ -124,8 +124,8 @@ private:
 	void colourSessionGroup(Session::SessionGroup);
 	void cycleSessionTypesUp();
 	void cycleSessionTypesDown();
-	void colourSessionType(Session::SessionType);
-	void startSession();
+    void colourSessionType(Session::SessionType);
+    void startSession();
 	void colourtDCSNumber(int vectorPos);
 
     void updateUserSessionList();
