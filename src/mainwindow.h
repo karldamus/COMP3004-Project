@@ -11,6 +11,8 @@
 #include <QTime>
 #include <QSpinBox>
 
+#include <cassert>
+
 #include "user.h"
 #include "session.h"
 

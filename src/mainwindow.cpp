@@ -535,6 +535,8 @@ void MainWindow::sessionStartButtonPressed() {
 		case Session::USER_DESIGNATED:
 			sessionTimeLabel->setText(QString::number(userDesignatedSpinBox->value()));
 			sessionTime = userDesignatedSpinBox->value();
+		default:
+			break;
 		}
 
 		isSessionRunning = true;
