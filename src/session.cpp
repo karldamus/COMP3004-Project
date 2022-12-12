@@ -36,6 +36,12 @@ Session::Session(QJsonObject sessionJson) {
     sessionType = strToType(sessionJson.value("sessionType").toString());
     sessionGroup = strToGroup(sessionJson.value("sessionGroup").toString());
     sessionIntensity = sessionJson["sessionIntensity"].toInt();
+
+    if (sessionJson.contains("userDesignatedSessionTime")) {
+        userDesignatedSessionTime = sessionJson["userDesignatedSessionTime"].toInt();
+    } else {
+        userDesignatedSessionTime = 1;
+    }
 }
 Session::Session(Session *s) {
     sessionType = s->sessionType;
@@ -122,6 +128,7 @@ QJsonObject Session::toJson() {
     sessionJson["sessionType"] = typeToStr(sessionType);
     sessionJson["sessionGroup"] = groupToStr(sessionGroup);
     sessionJson["sessionIntensity"] = sessionIntensity;
+    sessionJson["userDesignatedSessionTime"] = userDesignatedSessionTime;
 
     return sessionJson;
 }

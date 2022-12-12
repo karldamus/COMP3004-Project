@@ -475,9 +475,6 @@ void MainWindow::updateSessionInfo(int row) {
 		userDesignatedSpinBox->setValue(userDesignatedTime);
 	}
 
-	cout << "session: " << endl;
-	cout << s << endl;
-
 	// stop the current session
 	// stopSession();
 	currUser->unloadSession();
@@ -506,6 +503,9 @@ void MainWindow::saveSession() {
     isRecording = false;
     ui->recordSessionBtn->setEnabled(true);
     ui->saveBtn->setEnabled(false);
+
+	// set the user designated time
+	currentSession->setUserDesignatedSessionTime(userDesignatedSpinBox->value());
 
     // assuming some group and type are always chosen (non null)
     cout << QJsonDocument(currentSession->toJson()).toJson().toStdString() << endl;
