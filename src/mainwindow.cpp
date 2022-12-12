@@ -441,7 +441,7 @@ void MainWindow::saveSession() {
     ui->saveBtn->setEnabled(false);
 
     // assuming some group and type are always chosen (non null)
-//    currUser->loadSession(currentSession);
+   currUser->loadSession(currentSession);
    currUser->saveSession();
 
    updateUserSessionList();
