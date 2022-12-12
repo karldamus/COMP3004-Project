@@ -36,6 +36,12 @@ Session::Session(QJsonObject sessionJson) {
     sessionType = strToType(sessionJson.value("sessionType").toString());
     sessionGroup = strToGroup(sessionJson.value("sessionGroup").toString());
     sessionIntensity = sessionJson["sessionIntensity"].toInt();
+
+    if (sessionJson.contains("userDesignatedSessionTime")) {
+        userDesignatedSessionTime = sessionJson["userDesignatedSessionTime"].toInt();
+    } else {
+        userDesignatedSessionTime = 1;
+    }
 }
 Session::Session(Session *s) {
     sessionType = s->sessionType;
@@ -122,6 +128,7 @@ QJsonObject Session::toJson() {
     sessionJson["sessionType"] = typeToStr(sessionType);
     sessionJson["sessionGroup"] = groupToStr(sessionGroup);
     sessionJson["sessionIntensity"] = sessionIntensity;
+    sessionJson["userDesignatedSessionTime"] = userDesignatedSessionTime;
 
     return sessionJson;
 }
@@ -143,6 +150,10 @@ Session::SessionGroup Session::getSessionGroup() const {
 
 int Session::getSessionIntensity() const {
     return this->sessionIntensity;
+}
+
+int Session::getUserDesignatedSessionTime() const {
+    return this->userDesignatedSessionTime;
 }
 
 bool Session::isGroupSet() {
@@ -174,3 +185,11 @@ void Session::setSessionGroup(SessionGroup sessionGroup) {
 }
 void Session::setSessionIntensity(int sessionIntensity) { this->sessionIntensity = sessionIntensity; }
 void Session::setUserDesignatedSessionTime(int time) { userDesignatedSessionTime = time; }
+
+void Session::setIsGroupSet(bool isGroupSet) {
+    this->groupSet = groupSet;
+}
+
+void Session::setIsTypeSet(bool typeSet) {
+    this->typeSet = typeSet;
+}

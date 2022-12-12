@@ -170,6 +170,8 @@ private slots:
     void recordSession();
     void saveSession();
 
+    void updateSessionInfo(int row);
+
     void clearIntensityNum();
 	void updateSessionTimer();
 	void startSession();

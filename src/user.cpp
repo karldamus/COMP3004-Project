@@ -56,7 +56,7 @@ void User::saveSession() {
 
         // valid data check
         if (!isValidData(sessionJson)) {
-            qFatal("Invalid data in sessionJson");
+            qWarning("Invalid data in sessionJson");
             return;
         }
 
