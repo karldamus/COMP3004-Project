@@ -64,6 +64,12 @@ public:
 		QPixmap off;
 	};
 
+	struct CESModeLabelStruct{
+		QLabel* CESModeLabel;
+		QPixmap on;
+		QPixmap off;
+	};
+
 
     // ui creation methods
     void setupGridWrappers();
@@ -72,6 +78,7 @@ public:
 	void setupSessionGroupDisplayWrapper();
 	void setupSessionTypeDisplayWrapper();
 	void setuptDCSDisplayWrapper();
+	void setupCESModeDisplayWrapper();
 
 
     // button handling
@@ -87,18 +94,22 @@ private:
     int battery; // ranges from 0 to 100
     float batteryDrain; // rate at which the battery drains
     bool isPowered;
-	  Session* currentSession;
-	  bool isSessionRunning;
-	  int sessionTime;
-	  QLabel* sessionTimeLabel;
+	Session* currentSession;
+	bool isSessionRunning;
+	int sessionTime;
+	QLabel* sessionTimeLabel;
     QSpinBox* userDesignatedSpinBox;
     bool isRecording;
+	struct CESModeLabelStruct CESshortPulse;
+	bool CESModeBlink;
 
     // timers
     QTimer* powerButtonTimer;
     QTimer* idleTimer;
     QTimer* batteryTimer;
 	QTimer* sessionTimer;
+	QTimer* startSessionTimer;
+	QTimer* sessionBlinkTimer;
 
     // background color of each number
     QVector<QLabel*> intensityLabels;
@@ -125,8 +136,8 @@ private:
 	void cycleSessionTypesUp();
 	void cycleSessionTypesDown();
 	void colourSessionType(Session::SessionType);
-	void startSession();
 	void colourtDCSNumber(int vectorPos);
+	int gettDCSNumber();
 
     void updateUserSessionList();
 
@@ -161,6 +172,9 @@ private slots:
 
     void clearIntensityNum();
 	void updateSessionTimer();
+	void startSession();
+	void sessionBlink();
+
 };
 
 #endif // MAINWINDOW_H
