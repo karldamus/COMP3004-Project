@@ -18,6 +18,7 @@ class Session {
         Session();
         Session(SessionType sessionType, SessionGroup sessionGroup, int sessionIntensity);
         Session(QJsonObject sessionJson);
+        Session(Session* s);
         ~Session();
 
         // getters
@@ -31,6 +32,7 @@ class Session {
         void setSessionType(SessionType sessionType);
         void setSessionGroup(SessionGroup sessionGroup);
         void setSessionIntensity(int sessionIntensity);
+        void setUserDesignatedSessionTime(int time);
 
 
         // helpers
@@ -54,7 +56,7 @@ class Session {
         int sessionIntensity;
 		bool typeSet;
 		bool groupSet;
-		int userDesignatedSessionTime;
+        int userDesignatedSessionTime;
 };
 
 

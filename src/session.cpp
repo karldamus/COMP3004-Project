@@ -37,9 +37,16 @@ Session::Session(QJsonObject sessionJson) {
     sessionGroup = strToGroup(sessionJson.value("sessionGroup").toString());
     sessionIntensity = sessionJson["sessionIntensity"].toInt();
 }
+Session::Session(Session *s) {
+    sessionType = s->sessionType;
+    sessionGroup = s->sessionGroup;
+    sessionIntensity = s->sessionIntensity;
+    userDesignatedSessionTime = s->userDesignatedSessionTime;
+    typeSet = s->typeSet;
+    groupSet = s->groupSet;
+}
 
 Session::~Session() {
-
 }
 
 // override cout << for Session
@@ -120,7 +127,7 @@ QJsonObject Session::toJson() {
 }
 
 QString Session::toString() {
-    return QString("%1, %2, INT: %3").arg(typeToStr(sessionType), groupToStr(sessionGroup), QString::number(sessionIntensity));
+    return QString("%1, INT: %2").arg(typeToStr(sessionType), QString::number(sessionIntensity));
 }
 
 // getters
@@ -157,7 +164,6 @@ void Session::setSessionType(SessionType sessionType) {
 		this->typeSet = false;
 	}
 }
-
 void Session::setSessionGroup(SessionGroup sessionGroup) {
     this->sessionGroup = sessionGroup;
 	if (sessionGroup != Session::NULL_SESSION_GROUP){
@@ -166,8 +172,5 @@ void Session::setSessionGroup(SessionGroup sessionGroup) {
 		this->groupSet = false;
 	}
 }
-
-void Session::setSessionIntensity(int sessionIntensity) {
-    this->sessionIntensity = sessionIntensity;
-}
-
+void Session::setSessionIntensity(int sessionIntensity) { this->sessionIntensity = sessionIntensity; }
+void Session::setUserDesignatedSessionTime(int time) { userDesignatedSessionTime = time; }

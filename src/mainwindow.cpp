@@ -96,9 +96,10 @@ MainWindow::~MainWindow()
     delete ui;
     delete powerButtonTimer;
     delete idleTimer;
-	delete startSessionTimer;
-	delete sessionTimer;
-	delete sessionBlinkTimer;
+    delete currentSession;
+	  delete startSessionTimer;
+	  delete sessionTimer;
+	  delete sessionBlinkTimer;
 }
 
 
@@ -250,6 +251,7 @@ void MainWindow::cycleSessionGroups() {
 	// if the current session type is User Designed, it will cycle back to 20 min
 	// c++ enums are annoying, can't ++ it, using this
 	cout << "cycleSession" << endl;
+    if (isRecording) return;
 	switch (this->currentSession->getSessionGroup()) {
 		case Session::NULL_SESSION_GROUP:
 			this->currentSession->setSessionGroup(Session::TWENTY_MINUTES);
@@ -420,7 +422,7 @@ void MainWindow::startSession() {
 }
 
 void MainWindow::cycleUsers() {
-    if (!isPowered) return;
+    if (!isPowered || isRecording) return;
     int currUserId = currUser->getUserId();
 
     // unselect user in the ui
@@ -450,10 +452,14 @@ void MainWindow::updateUserSessionList() {
 }
 
 void MainWindow::recordSession() {
-//    if (isSessionRunning) return;
+    if (isSessionRunning) return;
+
     isRecording = true;
     ui->recordSessionBtn->setEnabled(false);
     ui->saveBtn->setEnabled(true);
+
+    currentSession->setSessionGroup(Session::USER_DESIGNATED);
+    colourSessionGroup(Session::USER_DESIGNATED);
 }
 void MainWindow::saveSession() {
     // called only after record session button has been pressed
@@ -462,8 +468,12 @@ void MainWindow::saveSession() {
     ui->saveBtn->setEnabled(false);
 
     // assuming some group and type are always chosen (non null)
-//    currUser->loadSession(currentSession);
-//    currUser->saveSession();
+    cout << QJsonDocument(currentSession->toJson()).toJson().toStdString() << endl;
+    //currentSession->setUserDesignatedSessionTime(ui->userDesignatedTimeBox->value());
+    currUser->loadSession(currentSession);
+    currUser->saveSession();
+
+    updateUserSessionList();
 }
 
 // helper functions to light up the numbers
@@ -623,8 +633,8 @@ void MainWindow::sessionBlink() { //this also does test connection display
 
 void MainWindow::sessionStartButtonPressed() {
 	cout << "Start Session button was pressed" << endl;
-	if (!isPowered) return;
-	if (isSessionRunning) return;
+    if (!isPowered || isSessionRunning || isRecording) return;
+
 	if (currentSession->isGroupSet() && currentSession->isTypeSet()){
 		//start session
 		sessionBlinkTimer->start(500);

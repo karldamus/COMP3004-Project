@@ -13,7 +13,6 @@ User::User(int userId) : activeSession(NULL) {
 }
 
 User::~User() {
-    unloadSession();
     unloadSavedSessions(); 
 }
 
@@ -61,14 +60,15 @@ void User::saveSession() {
             return;
         }
 
-        // write session to file
-        write(sessionJson);
-
         // add session to savedSessions
         savedSessions.append(activeSession);
         if (savedSessions.size() > MAX_SESSIONS) {
+            delete savedSessions[0];
             savedSessions.removeFirst();
         }
+
+        // write session to file
+        write();
     } else {
         // activeSession is NULL
         // TODO: throw Q warning -- no active session to save
@@ -76,20 +76,13 @@ void User::saveSession() {
 }
 
 void User::loadSession(Session *session) {
-    // if activeSession is not NULL, delete it
-    if (activeSession != NULL) {
-        delete activeSession;
-    }
-
     // set activeSession to session
-    activeSession = session;
+    // make sure saveSession is called after calling loadSession
+    activeSession = new Session(session);
 }
 
 void User::unloadSession() {
-    if (activeSession != NULL) {
-        delete activeSession;
-        activeSession = NULL;
-    }
+    activeSession = NULL;
 }
 
 QJsonObject User::read() {
@@ -144,11 +137,8 @@ QJsonObject User::validateUserDoc(QJsonDocument &userDoc) {
 }
 
 
-void User::write(QJsonObject &json) {
-    if (!isValidData(json)) {
-        qWarning("Invalid data passed to User::write");
-        return;
-    }
+void User::write() {
+    // all data in the savedSessions vector should be valid, no need to double check
 
     // get existing json data
     QJsonObject existingJson = read();
@@ -168,20 +158,12 @@ void User::write(QJsonObject &json) {
         if (userFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
             QString userIdStr = QString::number(userId);
 
-            // getters
-            // current user data
+            // get current user data
             QJsonObject userJson = existingJson[userIdStr].toObject();
-            // current users savesSessions array
-            QJsonArray savedSessionsArray = userJson["savedSessions"].toArray();
 
-            // setters/adders
-            // new session -> savedSessions array
-            savedSessionsArray.push_back(json);
-            if (savedSessionsArray.size() > MAX_SESSIONS) {
-                savedSessionsArray.removeFirst();
-            }
-            // replace savedSessions array with modified array
-            userJson["savedSessions"] = savedSessionsArray;
+            // replace savedSessions array with local savedSessions array
+            userJson["savedSessions"] = convertToJsonArray();
+
             // replace userJson with modified userJson
             existingJson[userIdStr] = userJson;
 
@@ -191,7 +173,7 @@ void User::write(QJsonObject &json) {
         } else {
             qWarning("Couldn't open user.json. Creating new user.json file and writing data to it");
             createNewUserFile();
-            write(json);
+            write();
         }
     }
 }
@@ -235,6 +217,14 @@ QJsonObject User::createEmptyUserJson() {
     }
 
     return userJson;
+}
+
+QJsonArray User::convertToJsonArray() {
+    QJsonArray jsonArray;
+    for (int i = 0; i < savedSessions.size(); ++i) {
+        jsonArray.append(savedSessions[i]->toJson());
+    }
+    return jsonArray;
 }
 
 bool User::isValidData(QJsonObject json) const {
