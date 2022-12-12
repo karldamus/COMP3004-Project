@@ -2,16 +2,35 @@
 
 using namespace std;
 
-Session::Session() :
-    sessionType(NULL_SESSION_TYPE),
-    sessionGroup(NULL_SESSION_GROUP),
-    sessionIntensity(0)
-{}
+
+Session::Session() {
+	// this constructor is called when the device is turned on
+	this->sessionType = NULL_SESSION_TYPE;
+	this->sessionGroup = NULL_SESSION_GROUP;
+	this->sessionIntensity = 1;
+	this->groupSet = false;
+	this->typeSet = false;
+	this->userDesignatedSessionTime = 1;
+
+}
+
 
 Session::Session(SessionType sessionType, SessionGroup sessionGroup, int sessionIntensity) {
     this->sessionType = sessionType;
     this->sessionGroup = sessionGroup;
     this->sessionIntensity = sessionIntensity;
+	this->userDesignatedSessionTime = 1;
+
+	if (sessionType == Session::NULL_SESSION_TYPE){
+		this->typeSet = false;
+	} else {
+		this->typeSet = true;
+	}
+	if (sessionGroup == Session::NULL_SESSION_GROUP){
+		this->groupSet = false;
+	} else {
+		this->groupSet = true;
+	}
 }
 Session::Session(QJsonObject sessionJson) {
     sessionType = strToType(sessionJson.value("sessionType").toString());
@@ -119,17 +138,36 @@ int Session::getSessionIntensity() const {
     return this->sessionIntensity;
 }
 
+bool Session::isGroupSet() {
+	return this->groupSet;
+}
+
+bool Session::isTypeSet() {
+	return this->typeSet;
+}
+
 // setters
 //
 
 void Session::setSessionType(SessionType sessionType) {
     this->sessionType = sessionType;
+	if (sessionType != Session::NULL_SESSION_TYPE){
+		this->typeSet = true;
+	} else {
+		this->typeSet = false;
+	}
 }
 
 void Session::setSessionGroup(SessionGroup sessionGroup) {
     this->sessionGroup = sessionGroup;
+	if (sessionGroup != Session::NULL_SESSION_GROUP){
+		this->groupSet = true;
+	} else {
+		this->groupSet = false;
+	}
 }
 
 void Session::setSessionIntensity(int sessionIntensity) {
     this->sessionIntensity = sessionIntensity;
 }
+

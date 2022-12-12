@@ -4,6 +4,21 @@
      <file>icons/power-button-on.png</file>
      <file>icons/triangle-up.png</file>
      <file>icons/triangle-down.png</file>
+     <file>user.json</file>
+     <file>icons/20minOff.png</file>
+     <file>icons/45minOff.png</file>
+     <file>icons/UserDesignatedOff.png</file>
+     <file>icons/20minOn.png</file>
+     <file>icons/45minOn.png</file>
+     <file>icons/UserDesignatedOn.png</file>
+     <file>icons/alphaOn.png</file>
+     <file>icons/alphaOff.png</file>
+     <file>icons/beta1Off.png</file>
+     <file>icons/beta1On.png</file>
+     <file>icons/beta2Off.png</file>
+     <file>icons/beta2On.png</file>
+     <file>icons/deltaOff.png</file>
+     <file>icons/deltaOn.png</file>
      <file>icons/switch-user.png</file>
  </qresource>
  </RCC>

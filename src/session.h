@@ -24,11 +24,14 @@ class Session {
         SessionType getSessionType() const;
         SessionGroup getSessionGroup() const;
         int getSessionIntensity() const;
+		bool isTypeSet();
+		bool isGroupSet();
 
         // setters
         void setSessionType(SessionType sessionType);
         void setSessionGroup(SessionGroup sessionGroup);
         void setSessionIntensity(int sessionIntensity);
+
 
         // helpers
         static QString groupToStr(SessionGroup sessionGroup);
@@ -49,6 +52,9 @@ class Session {
         SessionType sessionType;
         SessionGroup sessionGroup; // 20min, 45min, userDesignated
         int sessionIntensity;
+		bool typeSet;
+		bool groupSet;
+		int userDesignatedSessionTime;
 };
 
 
