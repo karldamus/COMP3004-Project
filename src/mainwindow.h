@@ -126,6 +126,7 @@ private:
 	void cycleSessionTypesDown();
 	void colourSessionType(Session::SessionType);
 	void startSession();
+    void stopSession();
 	void colourtDCSNumber(int vectorPos);
 
     void updateUserSessionList();
@@ -161,6 +162,8 @@ private slots:
 
     void clearIntensityNum();
 	void updateSessionTimer();
+
+    void updateSessionInfo(int);
 };
 
 #endif // MAINWINDOW_H

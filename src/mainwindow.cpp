@@ -346,6 +346,12 @@ void MainWindow::startSession() {
 	sessionTimer->start();
 }
 
+void MainWindow::stopSession() {
+	isSessionRunning = false;
+
+	sessionTimer->stop();
+}
+
 void MainWindow::cycleUsers() {
     if (!isPowered) return;
     int currUserId = currUser->getUserId();
@@ -374,6 +380,40 @@ void MainWindow::updateUserSessionList() {
         s = savedSessions->at(i);
         ui->userSessionList->addItem(s->toString());
     }
+
+	// on currentRowChanged, update the session info
+	connect(ui->userSessionList, SIGNAL(currentRowChanged(int)), this, SLOT(updateSessionInfo(int)));
+}
+
+void MainWindow::updateSessionInfo(int row) {
+	Session* s = currUser->getSavedSessions()->at(row);
+
+	cout << "session: " << endl;
+	cout << s << endl;
+
+	// stop the current session
+	stopSession();
+
+	// set current session to the retrieved session
+	currentSession = s;
+
+	// update the session info
+	colourSessionType(currentSession->getSessionType());
+	colourSessionGroup(currentSession->getSessionGroup());
+
+	// cout << "row: " << row << endl;
+	// Session* s = currUser->getSavedSessions()->at(row);
+	
+	// stop the current session
+	// stopSession();
+
+	// set current session to the retrieved session
+	// currUser->unloadSession();
+	// currUser->loadSession(s);
+
+	// update the session info
+	// colourSessionType(s->getSessionType());
+	// colourSessionGroup(s->getSessionGroup());
 }
 
 void MainWindow::recordSession() {
