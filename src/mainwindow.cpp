@@ -454,11 +454,16 @@ void MainWindow::powerOn() {
 void MainWindow::powerOff() {
     // turn off all lights
     turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
-	  colourSessionGroup(Session::NULL_SESSION_GROUP); // this will remove all colour from group icons
-	  colourSessionType(Session::NULL_SESSION_TYPE);
+    colourSessionGroup(Session::NULL_SESSION_GROUP); // this will remove all colour from group icons
+    colourSessionType(Session::NULL_SESSION_TYPE);
     ui->userSessionList->clear(); // clear user session list
-	  colourtDCSNumber(-1);
-	  isSessionRunning = false;
+    colourtDCSNumber(-1);
+    isSessionRunning = false;
+
+    // clear highlighted user
+    for (int i = 0; i < NUM_USERS; ++i) {
+        userLabels[i]->setStyleSheet("");
+    }
 
 
     // turning off the device
