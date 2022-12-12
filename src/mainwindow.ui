@@ -572,22 +572,17 @@ border-radius: 10px;
      <string>User Designated Time</string>
     </property>
    </widget>
-   <zorder>verticalLayoutWidget</zorder>
-   <zorder>batteryDisplayBar</zorder>
-   <zorder>powerWrapper</zorder>
-   <zorder>intensityWrapper</zorder>
-   <zorder>horizontalLayoutWidget</zorder>
-   <zorder>horizontalLayoutWidget_2</zorder>
-   <zorder>horizontalLayoutWidget_3</zorder>
-   <zorder>userSessionList</zorder>
-   <zorder>userSessionLabel</zorder>
-   <zorder>horizontalLayoutWidget_4</zorder>
-   <zorder>sessionStartButton</zorder>
-   <zorder>verticalLayoutWidget_3</zorder>
-   <zorder>horizontalLayoutWidget_3</zorder>
-   <zorder>userDesignatedTimeBox</zorder>
-   <zorder>sessionTimerTitleLabel</zorder>
-   <zorder>label</zorder>
+   <widget class="QWidget" name="horizontalLayoutWidget_5">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>70</y>
+      <width>101</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="CESModeDisplayWrapper"/>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -595,7 +590,7 @@ border-radius: 10px;
      <x>0</x>
      <y>0</y>
      <width>613</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuOasisPro">

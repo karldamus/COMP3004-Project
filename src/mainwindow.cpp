@@ -48,6 +48,16 @@ MainWindow::MainWindow(QWidget *parent) :
 	sessionTimer = new QTimer(this);
 	connect(sessionTimer, SIGNAL(timeout()), this, SLOT(updateSessionTimer()));
 
+	//initialize startSessionTimer
+	startSessionTimer = new QTimer(this);
+	startSessionTimer->setSingleShot(true);
+	connect(startSessionTimer, SIGNAL(timeout()), this, SLOT(startSession()));
+
+	//initialize blink timer
+	sessionBlinkTimer = new QTimer(this);
+	connect(sessionBlinkTimer, SIGNAL(timeout()), this, SLOT(sessionBlink()));
+	CESModeBlink = true;
+
     // initialize batteryDisplayBar
     batteryDisplayBar = ui->batteryDisplayBar;
     batteryDisplayBar->setValue(100);
@@ -87,6 +97,9 @@ MainWindow::~MainWindow()
     delete powerButtonTimer;
     delete idleTimer;
     delete currentSession;
+	  delete startSessionTimer;
+	  delete sessionTimer;
+	  delete sessionBlinkTimer;
 }
 
 
@@ -97,6 +110,7 @@ void MainWindow::setupGridWrappers() {
 	setupSessionGroupDisplayWrapper();
 	setupSessionTypeDisplayWrapper();
 	setuptDCSDisplayWrapper();
+	setupCESModeDisplayWrapper();
 }
 
 void MainWindow::setuptDCSDisplayWrapper() {
@@ -104,6 +118,24 @@ void MainWindow::setuptDCSDisplayWrapper() {
 	tDCSLabels.append(ui->tDCS050Label);
 	tDCSLabels.append(ui->tDCS075Label);
 	tDCSLabels.append(ui->tDCS100Label);
+}
+
+void MainWindow::setupCESModeDisplayWrapper() {
+	QHBoxLayout* CESModeDisplayWrapper = ui->CESModeDisplayWrapper;
+
+	QLabel* CESModeLabelShortPulse = new QLabel();
+	QPixmap pixmapShortPulseOff = QPixmap(QString::fromStdString(":/icons/shortPulseOff.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	QPixmap pixmapShortPulseOn = QPixmap(QString::fromStdString(":/icons/shortPulseOn.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	CESModeLabelShortPulse->setPixmap(pixmapShortPulseOff);
+	CESModeDisplayWrapper->addWidget(CESModeLabelShortPulse);
+	CESshortPulse = {CESModeLabelShortPulse,  pixmapShortPulseOn, pixmapShortPulseOff};
+
+	QLabel* CESModeLabelDutyCycle = new QLabel();
+	QPixmap pixmapDutyCycleOff = QPixmap(QString::fromStdString(":/icons/dutyCycleOff.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	QPixmap pixmapDutyCycleOn = QPixmap(QString::fromStdString(":/icons/dutyCycleOn.png")).scaled(40, 40, Qt::KeepAspectRatio, Qt::FastTransformation);
+	CESModeLabelDutyCycle->setPixmap(pixmapDutyCycleOff);
+	CESModeDisplayWrapper->addWidget(CESModeLabelDutyCycle);
+
 }
 
 void MainWindow::setupSessionTypeDisplayWrapper() {
@@ -332,6 +364,25 @@ void MainWindow::colourSessionType(Session::SessionType sessionType) {
 	}
 }
 
+int MainWindow::gettDCSNumber(){
+	switch (this->currentSession->getSessionType()){
+	case Session::NULL_SESSION_TYPE:
+		return -1;
+		break;
+	case Session::DELTA:
+		return 0;
+		break;
+	case Session::ALPHA:
+		return 1;
+		break;
+	case Session::BETA1:
+		return 2;
+		break;
+	case Session::BETA2:
+		return 3;
+	}
+}
+
 void MainWindow::colourtDCSNumber(int vectorPos) {
 	for (int i = 0; i < tDCSLabels.size(); i++){
 		if (i == vectorPos){
@@ -343,9 +394,31 @@ void MainWindow::colourtDCSNumber(int vectorPos) {
 }
 
 void MainWindow::startSession() {
-	isSessionRunning = true;
+	switch(currentSession->getSessionGroup()){
+	case Session::TWENTY_MINUTES:
+		sessionTimeLabel->setText(QString::number(20));
+		sessionTime = 20;
+		break;
+	case Session::FORTY_FIVE_MINUTES:
+		sessionTimeLabel->setText(QString::number(45));
+		sessionTime = 45;
+		break;
+	case Session::USER_DESIGNATED:
+		sessionTimeLabel->setText(QString::number(userDesignatedSpinBox->value()));
+		sessionTime = userDesignatedSpinBox->value();
 
-	sessionTimer->start();
+	default:
+		break;
+	}
+	CESshortPulse.CESModeLabel->setPixmap(CESshortPulse.on);
+	sessionBlinkTimer->stop();
+	//recolour tDCS
+	colourtDCSNumber(gettDCSNumber());
+	isSessionRunning = true;
+	turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
+	turnOnIntensityNum(0, currentSession->getSessionIntensity());
+	sessionTimer->start(1000);
+	//sessionTimer->start();
 }
 
 void MainWindow::cycleUsers() {
@@ -462,18 +535,21 @@ void MainWindow::powerOn() {
 }
 
 void MainWindow::powerOff() {
-    // turn off all lights
-    turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
-    colourSessionGroup(Session::NULL_SESSION_GROUP); // this will remove all colour from group icons
-    colourSessionType(Session::NULL_SESSION_TYPE);
-    ui->userSessionList->clear(); // clear user session list
-    colourtDCSNumber(-1);
-    isSessionRunning = false;
-
-    // clear highlighted user
+  // turn off all lights
+  turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
+	colourSessionGroup(Session::NULL_SESSION_GROUP); // this will remove all colour from group icons
+	colourSessionType(Session::NULL_SESSION_TYPE);
+  ui->userSessionList->clear(); // clear user session list
+	colourtDCSNumber(-1);
+	isSessionRunning = false;
+	sessionTimeLabel->setText(QString::fromStdString(""));
+	CESshortPulse.CESModeLabel->setPixmap(CESshortPulse.off);
+  
+   // clear highlighted user
     for (int i = 0; i < NUM_USERS; ++i) {
         userLabels[i]->setStyleSheet("");
     }
+
 
 
     // turning off the device
@@ -484,6 +560,7 @@ void MainWindow::powerOff() {
     idleTimer->stop();
     batteryTimer->stop();
 	sessionTimer->stop();
+	startSessionTimer->stop();
 }
 
 void MainWindow::softOff() {
@@ -496,7 +573,7 @@ void MainWindow::softOff() {
 }
 
 void MainWindow::updateSessionTimer() {
-	cout << "test" << endl;
+
 	if (sessionTime == 0){
 		sessionTimer->stop();
 		sessionTimeLabel->setText(QString::fromStdString(""));
@@ -532,30 +609,38 @@ void MainWindow::powerButtonHeld() {
 // signals
 //
 
+void MainWindow::sessionBlink() { //this also does test connection display
+	int tDCSNum = gettDCSNumber();
+
+
+	if (tDCSLabels[tDCSNum]->styleSheet() == "color: green"){
+		tDCSLabels[tDCSNum]->setStyleSheet("color: black");
+	} else {
+		tDCSLabels[tDCSNum]->setStyleSheet("color: green");
+	}
+
+	if (CESModeBlink){
+		CESshortPulse.CESModeLabel->setPixmap(CESshortPulse.on);
+		CESModeBlink = false;
+	} else {
+		CESshortPulse.CESModeLabel->setPixmap(CESshortPulse.off);
+		CESModeBlink = true;
+	}
+
+
+
+}
+
 void MainWindow::sessionStartButtonPressed() {
 	cout << "Start Session button was pressed" << endl;
     if (!isPowered || isSessionRunning || isRecording) return;
 
 	if (currentSession->isGroupSet() && currentSession->isTypeSet()){
 		//start session
-		switch(currentSession->getSessionGroup()){
-		case Session::TWENTY_MINUTES:
-			sessionTimeLabel->setText(QString::number(20));
-			sessionTime = 20;
-			break;
-		case Session::FORTY_FIVE_MINUTES:
-			sessionTimeLabel->setText(QString::number(45));
-			sessionTime = 45;
-			break;
-		case Session::USER_DESIGNATED:
-			sessionTimeLabel->setText(QString::number(userDesignatedSpinBox->value()));
-			sessionTime = userDesignatedSpinBox->value();
-		default:
-			break;
-		}
-
-		isSessionRunning = true;
-		sessionTimer->start(1000);
+		sessionBlinkTimer->start(500);
+		startSessionTimer->start(5000);
+		turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
+		turnOnIntensityNum(0, 3);
 
 	}
 }
@@ -575,7 +660,13 @@ void MainWindow::increaseIntensityButtonPressed() {
 	cout << "Increase Intensity button was pressed" << endl;
 	if (!isPowered) return;
 	if (isSessionRunning){
-
+		if (currentSession->getSessionIntensity() < MAX_INTENSITY_LEVEL){
+			currentSession->setSessionIntensity(currentSession->getSessionIntensity() + 1);
+			//turn off al lnumbers
+			//turn on right numbers
+			turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
+			turnOnIntensityNum(0, currentSession->getSessionIntensity());
+		}
 	} else {
 		cycleSessionTypesUp();
 	}
@@ -585,7 +676,13 @@ void MainWindow::decreaseIntensityButtonPressed() {
 	cout << "Decrease Intensity button was pressed" << endl;
 	if (!isPowered) return;
 	if (isSessionRunning){
-
+		if (currentSession->getSessionIntensity() > MIN_INTENSITY_LEVEL){
+			currentSession->setSessionIntensity(currentSession->getSessionIntensity() - 1);
+			//turn off al lnumbers
+			//turn on right numbers
+			turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
+			turnOnIntensityNum(0, currentSession->getSessionIntensity());
+		}
 	} else {
 		cycleSessionTypesDown();
 	}
