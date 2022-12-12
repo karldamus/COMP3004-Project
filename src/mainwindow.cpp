@@ -381,6 +381,8 @@ void MainWindow::updateUserSessionList() {
         ui->userSessionList->addItem(s->toString());
     }
 
+	// currUser->loadSavedSessions();
+
 	// on currentRowChanged, update the session info
 	connect(ui->userSessionList, SIGNAL(currentRowChanged(int)), this, SLOT(updateSessionInfo(int)));
 }
@@ -440,7 +442,9 @@ void MainWindow::saveSession() {
 
     // assuming some group and type are always chosen (non null)
 //    currUser->loadSession(currentSession);
-//    currUser->saveSession();
+   currUser->saveSession();
+
+   updateUserSessionList();
 }
 
 // helper functions to light up the numbers

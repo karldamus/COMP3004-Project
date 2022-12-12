@@ -61,6 +61,8 @@ void User::saveSession() {
             return;
         }
 
+        cout << "Writing session to file..." << endl;
+
         // write session to file
         write(sessionJson);
 
@@ -87,7 +89,6 @@ void User::loadSession(Session *session) {
 
 void User::unloadSession() {
     if (activeSession != NULL) {
-        delete activeSession;
         activeSession = NULL;
     }
 }
