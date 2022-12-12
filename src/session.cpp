@@ -11,7 +11,6 @@ Session::Session() {
 	this->groupSet = false;
 	this->typeSet = false;
 	this->userDesignatedSessionTime = 1;
-
 }
 
 
@@ -21,21 +20,25 @@ Session::Session(SessionType sessionType, SessionGroup sessionGroup, int session
     this->sessionIntensity = sessionIntensity;
 	this->userDesignatedSessionTime = 1;
 
-	if (sessionType == Session::NULL_SESSION_TYPE){
-		this->typeSet = false;
-	} else {
-		this->typeSet = true;
-	}
-	if (sessionGroup == Session::NULL_SESSION_GROUP){
-		this->groupSet = false;
-	} else {
-		this->groupSet = true;
-	}
+	this->typeSet = (sessionType != Session::NULL_SESSION_TYPE);
+    this->groupSet = (sessionGroup != Session::NULL_SESSION_GROUP);
 }
+
+Session::Session(SessionType sessionType, SessionGroup sessionGroup, int sessionIntensity, int userDesignatedSessionTime) {
+    this->sessionType = sessionType;
+    this->sessionGroup = sessionGroup;
+    this->sessionIntensity = sessionIntensity;
+    this->userDesignatedSessionTime = userDesignatedSessionTime;
+
+    this->typeSet = (sessionType != Session::NULL_SESSION_TYPE);
+    this->groupSet = (sessionGroup != Session::NULL_SESSION_GROUP);
+}
+
 Session::Session(QJsonObject sessionJson) {
     sessionType = strToType(sessionJson.value("sessionType").toString());
     sessionGroup = strToGroup(sessionJson.value("sessionGroup").toString());
     sessionIntensity = sessionJson["sessionIntensity"].toInt();
+    userDesignatedSessionTime = sessionJson["userDesignatedSessionTime"].toInt();
 }
 
 Session::~Session() {
@@ -115,8 +118,13 @@ QJsonObject Session::toJson() {
     sessionJson["sessionType"] = typeToStr(sessionType);
     sessionJson["sessionGroup"] = groupToStr(sessionGroup);
     sessionJson["sessionIntensity"] = sessionIntensity;
+    sessionJson["userDesignatedSessionTime"] = userDesignatedSessionTime;
 
     return sessionJson;
+}
+
+int Session::getUserDesignatedSessionTime() {
+    return userDesignatedSessionTime;
 }
 
 QString Session::toString() {
@@ -144,6 +152,14 @@ bool Session::isGroupSet() {
 
 bool Session::isTypeSet() {
 	return this->typeSet;
+}
+
+void Session::setIsTypeSet(bool isSet) {
+    this->typeSet = isSet;
+}
+
+void Session::setIsGroupSet(bool isSet) {
+    this->groupSet = isSet;
 }
 
 // setters

@@ -102,7 +102,7 @@ QJsonObject User::read() {
 
     QDir dir(path); // init path
     if (dir.mkpath(dir.absolutePath()) && QDir::setCurrent(dir.absolutePath())) {
-        // cout << "user.json  in " << QDir::currentPath().toStdString() << endl;
+        cout << "user.json  in " << QDir::currentPath().toStdString() << endl;
 
         QFile userFile("user.json");
 
@@ -136,6 +136,13 @@ QJsonObject User::read() {
 QJsonObject User::validateUserDoc(QJsonDocument &userDoc) {
     if (userDoc.isObject()) {
         QJsonObject userJson = userDoc.object();
+        
+        // conver userJson to a string
+        QString userJsonStr = QString::fromUtf8(QJsonDocument(userJson).toJson(QJsonDocument::Compact));
+
+        // output userJsonStr
+        cout << "user.json: " << userJsonStr.toStdString() << endl;
+
         return userJson;
     } else {
         qWarning("user.json is not an object");

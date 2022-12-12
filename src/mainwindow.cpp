@@ -386,34 +386,44 @@ void MainWindow::updateUserSessionList() {
 }
 
 void MainWindow::updateSessionInfo(int row) {
-	Session* s = currUser->getSavedSessions()->at(row);
+	if (row < 0) return;
+
+	cout << "row: " << row << endl;
+	cout << "currUser->getSavedSessions()->size(): " << endl;
+	cout << currUser->getSavedSessions()->size() << endl;
+
+	const QVector<Session*>* savedSessions = currUser->getSavedSessions();
+
+	Session* s = savedSessions->at(row);
+
+	if ((s->getSessionType() != Session::NULL_SESSION_TYPE) && (s->getSessionGroup() != Session::NULL_SESSION_GROUP)) {
+		s->setIsTypeSet(true);
+		s->setIsGroupSet(true);
+	}
+
+	if (s->getSessionGroup() == Session::USER_DESIGNATED) {
+		cout << "user designated session group" << endl;
+		cout << "user designated time: " << s->getUserDesignatedSessionTime() << endl;
+		// get user designated time 
+		int userDesignatedTime = s->getUserDesignatedSessionTime();
+
+		userDesignatedSpinBox->setValue(userDesignatedTime);
+	}
 
 	cout << "session: " << endl;
 	cout << s << endl;
 
 	// stop the current session
 	stopSession();
+	currUser->unloadSession();
 
 	// set current session to the retrieved session
+	currUser->loadSession(s);
 	currentSession = s;
 
 	// update the session info
 	colourSessionType(currentSession->getSessionType());
 	colourSessionGroup(currentSession->getSessionGroup());
-
-	// cout << "row: " << row << endl;
-	// Session* s = currUser->getSavedSessions()->at(row);
-	
-	// stop the current session
-	// stopSession();
-
-	// set current session to the retrieved session
-	// currUser->unloadSession();
-	// currUser->loadSession(s);
-
-	// update the session info
-	// colourSessionType(s->getSessionType());
-	// colourSessionGroup(s->getSessionGroup());
 }
 
 void MainWindow::recordSession() {
@@ -582,6 +592,8 @@ void MainWindow::sessionStartButtonPressed() {
 		isSessionRunning = true;
 		sessionTimer->start(1000);
 
+	} else {
+		cout << "Session group and type must be set before starting a session" << endl;
 	}
 }
 

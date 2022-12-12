@@ -17,12 +17,14 @@ class Session {
 
         Session();
         Session(SessionType sessionType, SessionGroup sessionGroup, int sessionIntensity);
+        Session(SessionType sessionType, SessionGroup sessionGroup, int sessionIntensity, int userDesignatedSessionTime);
         Session(QJsonObject sessionJson);
         ~Session();
 
         // getters
         SessionType getSessionType() const;
         SessionGroup getSessionGroup() const;
+        int getUserDesignatedSessionTime();
         int getSessionIntensity() const;
 		bool isTypeSet();
 		bool isGroupSet();
@@ -31,7 +33,8 @@ class Session {
         void setSessionType(SessionType sessionType);
         void setSessionGroup(SessionGroup sessionGroup);
         void setSessionIntensity(int sessionIntensity);
-
+        void setIsTypeSet(bool typeSet);
+        void setIsGroupSet(bool groupSet);
 
         // helpers
         static QString groupToStr(SessionGroup sessionGroup);
