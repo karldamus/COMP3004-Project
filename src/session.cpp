@@ -47,7 +47,6 @@ Session::Session(Session *s) {
 }
 
 Session::~Session() {
-
 }
 
 // override cout << for Session

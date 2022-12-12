@@ -86,6 +86,7 @@ MainWindow::~MainWindow()
     delete ui;
     delete powerButtonTimer;
     delete idleTimer;
+    delete currentSession;
 }
 
 

@@ -66,6 +66,7 @@ void User::saveSession() {
         // add session to savedSessions
         savedSessions.append(activeSession);
         if (savedSessions.size() > MAX_SESSIONS) {
+            delete savedSessions[0];
             savedSessions.removeFirst();
         }
     } else {
