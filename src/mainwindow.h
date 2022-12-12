@@ -15,6 +15,8 @@
 // UI CONSTANTS
 //
 
+#define NUM_USERS 3
+
 #define MIN_INTENSITY_LEVEL 1
 #define MAX_INTENSITY_LEVEL 8
 
@@ -63,6 +65,7 @@ private:
     int battery; // ranges from 0 to 100
     float batteryDrain; // rate at which the battery drains
     bool isPowered;
+    bool isRecording;
 
     // timers
     QTimer* powerButtonTimer;
@@ -82,7 +85,11 @@ private:
     void displayBattery();
     void delay();
 
-    User user;
+    void updateUserSessionList();
+
+    User* currUser;
+    QVector<User*> users;
+    QVector<QLabel*> userLabels;
 
 
 private slots:
@@ -97,6 +104,11 @@ private slots:
 
     // battery decay
     void drainBattery();
+
+    // user slots
+    void cycleUsers();
+    void recordSession();
+    void saveSession();
 
     void clearIntensityNum();
 };
