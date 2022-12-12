@@ -52,9 +52,6 @@ class User {
         QJsonObject createEmptyUserJson();
         QJsonArray convertToJsonArray();
 
-        // dev
-        void test();
-
     private:
         int userId; // 1, 2, or 3
         QVector<Session*> savedSessions;

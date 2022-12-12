@@ -245,17 +245,3 @@ bool User::isValidData(QJsonObject json) const {
 
     return true;
 }
-
-void User::test() {
-    QJsonObject userJson = read();
-    cout << "userJson (test()): " << QJsonDocument(userJson).toJson().toStdString() << endl;
-
-    cout << "loadSavedSessions(): " << endl;
-    loadSavedSessions();
-
-    cout << "Iterating over savedSessions: " << endl;
-
-    for (auto session : savedSessions) {
-        cout << *session << endl;
-    }
-}

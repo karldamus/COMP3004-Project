@@ -134,7 +134,9 @@ QJsonObject Session::toJson() {
 }
 
 QString Session::toString() {
-    return QString("%1, INT: %2").arg(typeToStr(sessionType), QString::number(sessionIntensity));
+    return QString("%1, INT: %2, DUR: %3").arg(typeToStr(sessionType),
+                                               QString::number(sessionIntensity),
+                                               QString::number(userDesignatedSessionTime));
 }
 
 // getters
@@ -186,7 +188,7 @@ void Session::setSessionGroup(SessionGroup sessionGroup) {
 void Session::setSessionIntensity(int sessionIntensity) { this->sessionIntensity = sessionIntensity; }
 void Session::setUserDesignatedSessionTime(int time) { userDesignatedSessionTime = time; }
 
-void Session::setIsGroupSet(bool isGroupSet) {
+void Session::setIsGroupSet(bool groupSet) {
     this->groupSet = groupSet;
 }
 

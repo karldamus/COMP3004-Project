@@ -79,13 +79,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->recordSessionBtn, SIGNAL(pressed()), this, SLOT(recordSession()));
     connect(ui->saveBtn, SIGNAL(pressed()), this, SLOT(saveSession()));
 
-	// countdown timer label
+    // store some commonly used ui elements
 	sessionTimeLabel = ui->sessionTimerDisplayLabel;
-
 	userDesignatedSpinBox = ui->userDesignatedTimeBox;
 
-    // dev mode
-    test();
+    // create default session with null values for the current session
+    currentSession = new Session();
 }
 
 MainWindow::~MainWindow()
@@ -97,9 +96,9 @@ MainWindow::~MainWindow()
     delete powerButtonTimer;
     delete idleTimer;
     delete currentSession;
-	  delete startSessionTimer;
-	  delete sessionTimer;
-	  delete sessionBlinkTimer;
+    delete startSessionTimer;
+    delete sessionTimer;
+    delete sessionBlinkTimer;
 }
 
 
@@ -233,7 +232,6 @@ void MainWindow::setupButtons() {
 	QPushButton* increaseIntensityButton = ui->increaseIntensityButton;
 	QPushButton* decreaseIntensityButton = ui->decreaseIntensityButton;
 	QPushButton* sessionStartButton = ui->sessionStartButton;
-
 
     connect(powerButton, SIGNAL(pressed()), this, SLOT(powerButtonPressed()));
     connect(powerButton, SIGNAL(released()), this, SLOT(powerButtonReleased()));
@@ -412,17 +410,21 @@ void MainWindow::startSession() {
 	}
 	CESshortPulse.CESModeLabel->setPixmap(CESshortPulse.on);
 	sessionBlinkTimer->stop();
+
 	//recolour tDCS
 	colourtDCSNumber(gettDCSNumber());
 	isSessionRunning = true;
+
+    // show the intensity
 	turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
 	turnOnIntensityNum(0, currentSession->getSessionIntensity());
-	sessionTimer->start(1000);
-	//sessionTimer->start();
+
+    // start the timer
+    sessionTimer->start(1000);
 }
 
 void MainWindow::cycleUsers() {
-    if (!isPowered || isRecording) return;
+    if (!isPowered || isRecording || isSessionRunning) return;
     int currUserId = currUser->getUserId();
 
     // unselect user in the ui
@@ -463,7 +465,7 @@ void MainWindow::updateSessionInfo(int row) {
 
 	if ((s->getSessionType() != Session::NULL_SESSION_TYPE) && (s->getSessionGroup() != Session::NULL_SESSION_GROUP)) {
 		s->setIsTypeSet(true);
-		s->setIsGroupSet(true);
+        s->setIsGroupSet(true);
 	}
 
 	if (s->getSessionGroup() == Session::USER_DESIGNATED) {
@@ -481,7 +483,8 @@ void MainWindow::updateSessionInfo(int row) {
 
 	// set current session to the retrieved session
 	currUser->loadSession(s);
-	currentSession = s;
+    delete currentSession;
+    currentSession = new Session(s);
 
 	// update the session info
 	colourSessionType(currentSession->getSessionType());
@@ -508,8 +511,6 @@ void MainWindow::saveSession() {
 	currentSession->setUserDesignatedSessionTime(userDesignatedSpinBox->value());
 
     // assuming some group and type are always chosen (non null)
-    cout << QJsonDocument(currentSession->toJson()).toJson().toStdString() << endl;
-    //currentSession->setUserDesignatedSessionTime(ui->userDesignatedTimeBox->value());
     currUser->loadSession(currentSession);
     currUser->saveSession();
 
@@ -564,12 +565,8 @@ void MainWindow::powerOn() {
 
     // show battery
     displayBattery();
-
-
-	// create default session with null values for the current session
-	currentSession = new Session();
   
-  // select user 1
+    // select user 1
     currUser = users[NUM_USERS - 1];
     cycleUsers();
 }
@@ -590,7 +587,8 @@ void MainWindow::powerOff() {
         userLabels[i]->setStyleSheet("");
     }
 
-
+    // reset battery drain
+    batteryDrain = 1.0;
 
     // turning off the device
     isPowered = false;
@@ -601,6 +599,7 @@ void MainWindow::powerOff() {
     batteryTimer->stop();
 	sessionTimer->stop();
 	startSessionTimer->stop();
+    sessionBlinkTimer->stop();
 }
 
 void MainWindow::softOff() {
@@ -652,7 +651,6 @@ void MainWindow::powerButtonHeld() {
 void MainWindow::sessionBlink() { //this also does test connection display
 	int tDCSNum = gettDCSNumber();
 
-
 	if (tDCSLabels[tDCSNum]->styleSheet() == "color: green"){
 		tDCSLabels[tDCSNum]->setStyleSheet("color: black");
 	} else {
@@ -682,7 +680,7 @@ void MainWindow::sessionStartButtonPressed() {
 		turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
 		turnOnIntensityNum(0, 3);
 
-	}
+    }
 }
 
 void MainWindow::powerButtonPressed() {
@@ -718,7 +716,7 @@ void MainWindow::decreaseIntensityButtonPressed() {
 	if (isSessionRunning){
 		if (currentSession->getSessionIntensity() > MIN_INTENSITY_LEVEL){
 			currentSession->setSessionIntensity(currentSession->getSessionIntensity() - 1);
-			//turn off al lnumbers
+            //turn off all numbers
 			//turn on right numbers
 			turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
 			turnOnIntensityNum(0, currentSession->getSessionIntensity());
@@ -731,23 +729,14 @@ void MainWindow::decreaseIntensityButtonPressed() {
 void MainWindow::drainBattery() {
     if (!isPowered || battery <= 0) return;
 
-     battery -= batteryDrain;
-//    battery -= 10;
+    // increase battery drain when session is running
+    if (isSessionRunning) {
+        batteryDrain = 2.0;
+    }
+
+    battery -= batteryDrain;
     if (battery <= 0)
         powerOff();
 
     batteryDisplayBar->setValue(battery);
-}
-
-// dev
-//
-
-void MainWindow::test() {
-}
-
-void MainWindow::delay()
-{
-    QTime dieTime= QTime::currentTime().addSecs(1);
-    while (QTime::currentTime() < dieTime)
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 }

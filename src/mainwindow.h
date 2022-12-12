@@ -80,26 +80,27 @@ public:
 	void setuptDCSDisplayWrapper();
 	void setupCESModeDisplayWrapper();
 
-
     // button handling
     void powerButtonClicked();
 
-    // other initializations
-
-    // dev testing
-    void test();
-
 private:
     Ui::MainWindow *ui;
+    // power and battery
     int battery; // ranges from 0 to 100
     float batteryDrain; // rate at which the battery drains
     bool isPowered;
+
+    // session
 	Session* currentSession;
 	bool isSessionRunning;
 	int sessionTime;
 	QLabel* sessionTimeLabel;
+
+    // recording
     QSpinBox* userDesignatedSpinBox;
     bool isRecording;
+
+    // connection test
 	struct CESModeLabelStruct CESshortPulse;
 	bool CESModeBlink;
 
@@ -120,17 +121,21 @@ private:
 	// session type labels
 	QVector<sessionTypeLabelStruct> sessionTypeLabels;
 
-	//tDCS label vector
+    // tDCS label vector
 	QVector<QLabel*> tDCSLabels;
 
     // ui elements
     QProgressBar* batteryDisplayBar;
 
+    // User details
+    User* currUser;
+    QVector<User*> users;
+    QVector<QLabel*> userLabels;
+
     // helper functions
     void turnOnIntensityNum(int, int);
     void turnOffIntensityNum(int, int);
     void displayBattery();
-    void delay();
 	void cycleSessionGroups();
 	void colourSessionGroup(Session::SessionGroup);
 	void cycleSessionTypesUp();
@@ -141,9 +146,6 @@ private:
 
     void updateUserSessionList();
 
-    User* currUser;
-    QVector<User*> users;
-    QVector<QLabel*> userLabels;
 
 
 private slots:
@@ -151,6 +153,7 @@ private slots:
     void powerButtonReleased();
     void powerButtonHeld();
 
+    // starting session
 	void sessionStartButtonPressed();
 
 	// intensity buttons
