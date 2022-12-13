@@ -15,6 +15,7 @@ This is the final project for COMP3004 at Carleton University.
 - [Sequence Diagrams](https://github.com/karldamus/COMP3004-Project/blob/main/project%20deliverables/Sequence%20Diagrams.pdf)
 - [UML Class Diagram](https://github.com/karldamus/COMP3004-Project/blob/main/project%20deliverables/UML%20Class%20Diagram.pdf)
 - [Traceability Matrix](https://github.com/karldamus/COMP3004-Project/blob/main/project%20deliverables/Traceability%20Matrix.pdf)
+- [Use Case Diagram](https://github.com/karldamus/COMP3004-Project/blob/main/project%20deliverables/Use%20Case%20Diagram.pdf)
 
 ## Feature List
 - Power: Turn On / Turn Off + Ending a Session
