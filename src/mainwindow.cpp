@@ -482,7 +482,7 @@ void MainWindow::updateSessionInfo(int row) {
 	currUser->unloadSession();
 
 	// set current session to the retrieved session
-	currUser->loadSession(s);
+    currUser->setActiveSession(s);
     delete currentSession;
     currentSession = new Session(s);
 
@@ -572,15 +572,18 @@ void MainWindow::powerOn() {
 }
 
 void MainWindow::powerOff() {
-  // turn off all lights
-  turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
+    // turn off all lights
+    turnOffIntensityNum(0, MAX_INTENSITY_LEVEL);
 	colourSessionGroup(Session::NULL_SESSION_GROUP); // this will remove all colour from group icons
 	colourSessionType(Session::NULL_SESSION_TYPE);
-  ui->userSessionList->clear(); // clear user session list
+    ui->userSessionList->clear(); // clear user session list
 	colourtDCSNumber(-1);
 	isSessionRunning = false;
 	sessionTimeLabel->setText(QString::fromStdString(""));
 	CESshortPulse.CESModeLabel->setPixmap(CESshortPulse.off);
+
+    // re enable it
+    ui->userSessionList->setEnabled(true);
   
    // clear highlighted user
     for (int i = 0; i < NUM_USERS; ++i) {
@@ -603,12 +606,19 @@ void MainWindow::powerOff() {
 }
 
 void MainWindow::softOff() {
-	powerOff();
+    powerOff();
     turnOnIntensityNum(0, MAX_INTENSITY_LEVEL);
     for (int i = MAX_INTENSITY_LEVEL - 1; i >= 0; --i) {
         QTimer::singleShot(500 * (MAX_INTENSITY_LEVEL - i), this, [this, i]() {turnOffIntensityNum(i, i+1);});
     }
-
+    if (currentSession->getSessionGroup() == Session::USER_DESIGNATED) {
+        if (currUser->getActiveSession()->getSessionIntensity() == currentSession->getSessionIntensity()) {
+            return;
+        }
+        cout << "saving intensity" <<endl;
+        currUser->getActiveSession()->setSessionIntensity(currentSession->getSessionIntensity());
+        currUser->write();
+    }
 }
 
 void MainWindow::updateSessionTimer() {
@@ -674,6 +684,9 @@ void MainWindow::sessionStartButtonPressed() {
     if (!isPowered || isSessionRunning || isRecording) return;
 
 	if (currentSession->isGroupSet() && currentSession->isTypeSet()){
+        // disable user session list
+        ui->userSessionList->setEnabled(false);
+
 		//start session
 		sessionBlinkTimer->start(500);
 		startSessionTimer->start(5000);

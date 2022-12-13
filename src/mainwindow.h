@@ -94,7 +94,7 @@ private:
 	Session* currentSession;
 	bool isSessionRunning;
 	int sessionTime;
-	QLabel* sessionTimeLabel;
+    QLabel* sessionTimeLabel;
 
     // recording
     QSpinBox* userDesignatedSpinBox;

@@ -30,7 +30,11 @@ class User {
         ~User();
 
         int getUserId() const;
+        Session* getActiveSession() const;
         const QVector<Session*>* getSavedSessions() const;
+
+        // setters
+        void setActiveSession(Session* s);
 
         // file io
         void createNewUserFile();

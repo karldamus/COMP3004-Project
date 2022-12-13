@@ -17,7 +17,10 @@ User::~User() {
 }
 
 int User::getUserId() const { return this->userId; }
+Session* User::getActiveSession() const { return this->activeSession; }
 const QVector<Session*>* User::getSavedSessions() const { return &savedSessions; }
+
+void User::setActiveSession(Session* s) { this->activeSession = s; }
 
 void User::loadSavedSessions() {
     // convert userId to a QString
