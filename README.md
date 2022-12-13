@@ -11,11 +11,11 @@ This is the final project for COMP3004 at Carleton University.
 ## Feature List
 - Power: Turn On / Turn Off + Ending a Session
 - Battery level
-- Selecting a session
+- Select a session (pre-determined or user designated)
 - Connection test
-- Intensity
-- Record
-- Replay
+- Adjust intensity
+- Record / save a session
+- Replay a session
 
 ## Team #43
 - Karl Damus
