@@ -8,6 +8,8 @@ This is the final project for COMP3004 at Carleton University.
 - Jong Sheen Alias Gabriel Chung
 - Evan Allen
 
+[GitHub](https://github.com/karldamus/COMP3004-Project)
+
 ## Project Deliverables
 - [Use Cases](https://github.com/karldamus/COMP3004-Project/blob/main/project%20deliverables/Use%20Cases.pdf)
 - [Sequence Diagrams](https://github.com/karldamus/COMP3004-Project/blob/main/project%20deliverables/Sequence%20Diagrams.pdf)
