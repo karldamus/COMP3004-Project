@@ -111,3 +111,19 @@ This is the final project for COMP3004 at Carleton University.
 2. Select user by pressing the cycle button beside users list
 3. Select a saved session
 4. Press start button
+
+## File Structure
+- [main.cpp](https://github.com/karldamus/COMP3004-Project/tree/main/src/main.cpp)
+- [mainwindow.cpp](https://github.com/karldamus/COMP3004-Project/tree/main/src/mainwindow.cpp)
+- [mainwindow.h](https://github.com/karldamus/COMP3004-Project/tree/main/src/mainwindow.h)
+- [user.cpp](https://github.com/karldamus/COMP3004-Project/tree/main/src/user.cpp)
+- [user.h](https://github.com/karldamus/COMP3004-Project/tree/main/src/user.h)
+- [session.cpp](https://github.com/karldamus/COMP3004-Project/tree/main/src/session.cpp)
+- [session.h](https://github.com/karldamus/COMP3004-Project/tree/main/src/session.h)
+- [mainwindow.ui](https://github.com/karldamus/COMP3004-Project/tree/main/src/mainwindow.ui)
+- [qtresources.qrc](https://github.com/karldamus/COMP3004-Project/tree/main/src/qtresources.qrc)
+- [user.json](https://github.com/karldamus/COMP3004-Project/tree/main/src/user.json)
+- [user.json.example](https://github.com/karldamus/COMP3004-Project/tree/main/src/user.json.example)
+- [icons/](https://github.com/karldamus/COMP3004-Project/tree/main/src/icons)
+- [src.pro](https://github.com/karldamus/COMP3004-Project/tree/main/src/src.pro)
+- [src.pro.user](https://github.com/karldamus/COMP3004-Project/tree/main/src/src.pro.user)
